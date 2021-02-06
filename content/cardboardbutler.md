@@ -2,7 +2,7 @@
 title = "Coardboard Butler V3"
 date = 2019-08-31
 [taxonomies]
-tags = ["React", "Typescript", "TDD", "Javascript", "HTML", "XML", "JSON", "Azure CI/CD" ,"Red Green Refactor", "ImmutableJS" ]
+tags = ["React", "Typescript", "TDD", "Javascript", "XML", "JSON", "Azure CI/CD" ,"Red Green Refactor"]
 [extra]
 github="https://github.com/PhilipK/CardboardButler"
 +++
