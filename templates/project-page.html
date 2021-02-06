@@ -6,6 +6,10 @@
 <a href="{{ page.extra.github | safe }}">Github Link</a>
 {% endif %}
 
+{% if page.extra.link %}
+<a href="{{ page.extra.link | safe }}">See it live</a>
+{% endif %}
+
 <p>{{ page.content | safe }}</p>
 
 <div>

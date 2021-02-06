@@ -5,6 +5,7 @@ date = 2019-08-31
 tags = ["React", "Typescript", "TDD", "Javascript", "XML", "JSON", "Azure CI/CD" ,"Red Green Refactor"]
 [extra]
 github="https://github.com/PhilipK/CardboardButler"
+link="https://cardboardbutler.azureedge.net/"
 +++
 
 The thrid (and current) iteration of Cardboard Butler; A webpage to find the boardgame to play with your friends.
