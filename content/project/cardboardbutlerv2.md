@@ -1,14 +1,14 @@
 +++
-title = "Coardboard Butler V3"
+title = "Coardboard Butler V2"
 date = 2019-08-31
 [taxonomies]
-tags = ["React", "Typescript", "TDD", "Javascript", "XML", "JSON", "Azure CI/CD" ,"Red Green Refactor"]
+tags = ["React", "Typescript", "TDD", "Javascript", "XML", "JSON", "Azure CI/CD" ,"Red Green Refactor","Jest"]
 [extra]
 github="https://github.com/PhilipK/CardboardButler"
 link="https://cardboardbutler.azureedge.net/"
 +++
 
-The thrid (and current) iteration of Cardboard Butler; A webpage to find the boardgame to play with your friends.
+The second (and current) iteration of Cardboard Butler; A webpage to find the boardgame to play with your friends.
 
 ## Why do a version 3?
 
