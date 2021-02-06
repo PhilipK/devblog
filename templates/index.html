@@ -5,7 +5,7 @@
   {{ section.title }}
 </h1>
 <ul>
-  {% for project in section.pages %}
+  {% for page in section.pages %}
   <li><a href="{{ page.permalink | safe }}">{{ page.title }}</a></li>
   {% endfor %}
 </ul>
