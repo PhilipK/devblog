@@ -47,7 +47,7 @@ In the old version, I had made a server to proxy and cache the calls to BGG usin
 
 I found an NPM package that transforms XML into JSON [xml-js](https://www.npmjs.com/package/xml-js). The resulting JSON is not quite what you would expect from a normal JSON api (you can tell it used to be xml), but it does the job. I created typescript definitions that matched the output and hid the XML convertion in the service. It worked out great, and I would repeat this any time I have to work with an XML service from a frontend (or maybe even in a backend).
 
-## No ImmutableJS
+## Using typescript immutable instead of a library
 
 Immutable data structures are great! Specially when working with React and you combine it with Pure Components.
 [ImmutableJS](https://immutable-js.github.io/immutable-js/) did its job for the first versions of Cardboard Butler, but, the problem was that I had coded the old version to be deeply dependent on it, even deep down in the render functions of the components. This made porting any component almost impossible. Typescript have gotten some great features for handling [immutable data](https://medium.com/jspoint/typescript-data-immutability-71dc3e604426) that where not arround when I first used ImmutableJS. I don't think that I will use ImmutableJS again, I will just rely on typescript instead.

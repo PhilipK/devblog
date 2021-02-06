@@ -4,17 +4,15 @@
 
 {% if page.extra.github %}
 <a href="{{ page.extra.github | safe }}">Github Link</a>
-{% endif %}
-
-{% if page.extra.link %}
+{% endif %} {% if page.extra.link %}
 <a href="{{ page.extra.link | safe }}">See it live</a>
 {% endif %}
 
 <p>{{ page.content | safe }}</p>
 
 <div>
-  <h4>Tools used</h4>
-  <ul>
+  <h3>Tags</h3>
+  <ul class="tags">
     {% for tag in page.taxonomies.tags %}
     <li><a href="/tags/{{ tag | slugify }}">{{ tag }}</a></li>
     {% endfor %}
