@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-
+{% set styleurl = get_url(path="/style.css") %}
 <head>
   <meta charset="utf-8">
-  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="{{styleurl}}">
   <title>MyBlog</title>
 </head>
 
