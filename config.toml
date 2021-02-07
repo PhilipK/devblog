@@ -1,5 +1,5 @@
 # The URL the site will be built for
-base_url = "http://localhost:8080"
+base_url = "https://philipk.github.io/hobbyportfolio/"
 # Whether to automatically compile all Sass files in the sass directory
 compile_sass = true
 # Whether to build a search index to be used later on by a JavaScript library
