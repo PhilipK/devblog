@@ -1,5 +1,5 @@
 +++
-title = "Aseprite to run"
+title = "Aseprite to RON"
 date = 2020-06-16
 [taxonomies]
 tags = ["Rust", "Aseprite"]
