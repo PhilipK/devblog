@@ -14,7 +14,7 @@
   <h3>Tags</h3>
   <ul class="tags">
     {% for tag in page.taxonomies.tags %}
-    <li><a href="/tags/{{ tag | slugify }}">{{ tag }}</a></li>
+      <li><a href="{{get_taxonomy_url(kind="tags", name=tag)}}">{{ tag }}</a></li>
     {% endfor %}
   </ul>
 </div>
