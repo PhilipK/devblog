@@ -30,7 +30,7 @@ The Algorithm for this mosaic goes something like this:
 - Go through each image and add it to the "lowest column", updating the height of the column
 
 This will make an image that looks something like this:
-![Mosaic Image](/static/images/mosaic.png)
+![Mosaic Image](https://raw.githubusercontent.com/PhilipK/hobbyportfolio/main/static/images/mosaic.png)
 
 The trick here is to find the best number of columns, each iteration had a separate way of handling this.
 
