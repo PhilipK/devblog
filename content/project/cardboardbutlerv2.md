@@ -10,7 +10,7 @@ link="https://cardboardbutler.azureedge.net/"
 
 The second (and current) iteration of Cardboard Butler; A webpage to find the boardgame to play with your friends.
 
-## Why do a version 3?
+## Why do a version 2?
 
 There where multiple reasons that i wanted to re-implement Cardboard Butler;
 
