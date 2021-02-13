@@ -5,6 +5,8 @@ date = 2020-06-08
 tags = ["Rust", "C#","Typescript","DotNet Core","Canvas","Rayon","Docker"]
 [extra]
 github="https://github.com/PhilipK/Rust_mosaic"
+image="../static/images/mosaic.png"
+description="Generates a mosaic of images and set it as your lockscreen"
 +++
 
 Generates a "mosaic" of a collection of images.
