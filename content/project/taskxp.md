@@ -5,4 +5,6 @@ date = 2011-09-16
 tags = ["Android","Java"]
 +++
 
-## Under construction
+My first real Android App
+
+## 
