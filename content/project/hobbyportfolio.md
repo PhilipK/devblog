@@ -9,7 +9,7 @@ github="https://github.com/PhilipK/hobbyportfolio"
 
 Using a static site generator to make this webpage, uses [Zola](https://www.getzola.org/)
 
-## The hobby project graveyard 
+## The hobby project graveyard
 
 I think that a lot of programmers have a long list of projects that they have started and never finihsed. I am no exception. But for every project I make I learn something, and I do make cool stuff, even if it is just for me. I realized that instead of "being ashames of not finishing things" I should be happy and proud that I keep learning new things. This page is a tribute to those "fallen heroes/projects". Hopefully readers can learn something from my mistakes, but even if they don't I can atleast look back on my old projects with foundness and pride.
 
