@@ -4,7 +4,7 @@ date = 2020-06-16
 [taxonomies]
 tags = ["Rust", "Aseprite"]
 [extra]
-image="../static/images/toron.png"
+image="../static/images/toron.PNG"
 description="The first real usable program I made in Rust."
 +++
 

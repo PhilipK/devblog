@@ -4,7 +4,7 @@ date = 2021-01-27
 [taxonomies]
 tags = ["Rust","Reqwest","Rayon", "Tokio"]
 [extra]
-image="../static/images/cwget.png"
+image="../static/images/cwget.PNG"
 description="A small cli program that takes a list of urls and downloads the content to a target folder"
 +++
 

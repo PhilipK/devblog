@@ -4,7 +4,7 @@ date = 2020-11-01
 [taxonomies]
 tags = ["Rust", "Monte Carlo Search","Legion","SDL 2"]
 [extra]
-image="../static/images/repeatgame.png"
+image="../static/images/repeatgame.PNG"
 description="A turnbased time travel game with little robots"
 +++
 

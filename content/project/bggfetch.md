@@ -4,7 +4,7 @@ date = 2021-02-04
 [taxonomies]
 tags = ["Rust", "Tokio","Reqwest"]
 [extra]
-image="../static/images/bggfetch.png"
+image="../static/images/bggfetch.PNG"
 description="20 lines to get all your images from BGG"
 +++
 

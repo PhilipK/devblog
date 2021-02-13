@@ -4,7 +4,7 @@ date = 2020-07-28
 [taxonomies]
 tags = ["Rust", "SDL2","Legion","A*-Search"]
 [extra]
-image="../static/images/priestest.png"
+image="../static/images/priestest.PNG"
 description="A rougelike game where you never attack and only heal"
 
 +++
