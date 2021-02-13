@@ -3,6 +3,9 @@ title = "Repeat Game"
 date = 2020-11-01
 [taxonomies]
 tags = ["Rust", "Monte Carlo Search","Legion","SDL 2"]
+[extra]
+image="../static/images/repeatgame.png"
+description="A turnbased time travel game with little robots"
 +++
 
 A turnbased time travel game.

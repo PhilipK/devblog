@@ -5,6 +5,8 @@ date = 2021-02-06
 tags = ["Static Site Generator","Zola","Markdown"]
 [extra]
 github="https://github.com/PhilipK/hobbyportfolio"
+image="../static/images/hobbyproject.PNG"
+description="Using a static site generator to make this webpage that you are reading right now"
 +++
 
 Using a static site generator to make this webpage, uses [Zola](https://www.getzola.org/)

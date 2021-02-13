@@ -3,6 +3,9 @@ title = "Sodukusolver"
 date = 2020-09-10
 [taxonomies]
 tags = ["Rust"]
+[extra]
+image="../static/images/sodukusolver.png"
+description="A small simple soduku solver written in Rust"
 +++
 
 A small simple soduku solver written in Rust.

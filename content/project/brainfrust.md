@@ -5,6 +5,8 @@ date = 2020-08-06
 tags = ["Rust", "WASM","BrainFuck","Interpeter","Compiler"]
 [extra]
 github="https://github.com/PhilipK/brainfrust"
+image="../static/images/brainfrust.png"
+description="A small interpeter/compiler for Brainfuck written in Rust"
 +++
 
 A small interpeter and compiler for the [Brainfuck](https://en.wikipedia.org/wiki/Brainfuck) (BF) programming language written in Rust.

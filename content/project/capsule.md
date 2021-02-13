@@ -5,6 +5,8 @@ date = 2019-01-20
 tags = ["C#", "Azure","React","Webpack","Blob Storage","Azure Functions","Shared Access Signatures"]
 [extra]
 github="https://github.com/PhilipK/XMinutes"
+image="../static/images/blob.png"
+description="A service for sharing content but only for a certain set of time."
 +++
 
 A small service for sharing content but only for a certain set of time.

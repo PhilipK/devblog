@@ -3,6 +3,9 @@ title = "Sidereal Confluence App"
 date = 2019-12-10
 [taxonomies]
 tags = ["Angular", "Typescript","Karma"]
+[extra]
+image="../static/images/sidereal.jpg"
+description="Sidereal Confluence board game helper app, written in Angular"
 +++
 
 Sidereal Confluence board game helper app, written in Angular.

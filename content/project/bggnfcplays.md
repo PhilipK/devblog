@@ -5,6 +5,8 @@ date = 2017-12-07
 tags = ["Kotlin", "Android","NFC"]
 [extra]
 github="https://bitbucket.org/PhilipK/bggnfcplays"
+image="../static/images/nfc.jpg"
+description="Android App that uses NFC to track which boardgames you play and for how long."
 +++
 A small app that uses NFC to track which boardgames I play and for how long.
 

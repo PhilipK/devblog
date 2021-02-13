@@ -7,6 +7,7 @@ tags = ["React", "Typescript", "TDD", "JavaScript", "XML", "JSON", "Azure CI/CD"
 github="https://github.com/PhilipK/CardboardButler"
 link="https://cardboardbutler.azureedge.net/"
 description="A webpage to find the board game to play with your friends"
+image="../static/images/butler.png"
 +++
 
 The second (and current) iteration of Cardboard Butler; A webpage to find the board game to play with your friends.

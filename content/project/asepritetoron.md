@@ -3,6 +3,9 @@ title = "Aseprite to RON"
 date = 2020-06-16
 [taxonomies]
 tags = ["Rust", "Aseprite"]
+[extra]
+image="../static/images/toron.png"
+description="The first real usable program I made in Rust."
 +++
 
 The first real usable program I made in Rust.

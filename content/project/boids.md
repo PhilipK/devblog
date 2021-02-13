@@ -5,6 +5,8 @@ date = 2020-06-08
 tags = ["Unity", "GPU","Compute shaders","Shaders","C#"]
 [extra]
 github="https://github.com/PhilipK/GpuBoids"
+image="../static/images/boids.png"
+description="A GPU simulation of fish in a fish tank using compute shaders"
 +++
 
 A small simulation of fish in a fish tank.

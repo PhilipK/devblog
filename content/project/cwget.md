@@ -3,6 +3,9 @@ title = "CWget"
 date = 2021-01-27
 [taxonomies]
 tags = ["Rust","Reqwest","Rayon", "Tokio"]
+[extra]
+image="../static/images/cwget.png"
+description="A small cli program that takes a list of urls and downloads the content to a target folder"
 +++
 
 A small cli program that takes a list of urls and downloads the content to a target folder (but only if they are not already downloaded).
