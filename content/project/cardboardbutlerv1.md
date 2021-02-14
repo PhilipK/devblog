@@ -5,6 +5,8 @@ date = 2017-02-16
 tags = ["React", "ImmutableJS",  "JavaScript", "GraphQL", "JSON", "NodeJs" ,"Azure"]
 [extra]
 github="https://bitbucket.org/PhilipK/bgg-graphql/"
+description="The first version of a webpage to find the board game to play"
+image="../static/images/butler.png"
 +++
 
 The first (and no decommisioned) version of Cardboard Butler.

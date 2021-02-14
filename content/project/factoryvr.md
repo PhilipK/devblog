@@ -5,6 +5,8 @@ date = 2016-10-05
 tags = ["VR","C#","Unity"]
 [extra]
 github="https://bitbucket.org/PhilipK/factovry/"
+image="../static/images/factoryvr.PNG"
+description="A prototype for a Factory Builder VR game."
 +++
 
 A prototype for a Factory Builder VR game.

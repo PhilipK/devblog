@@ -5,6 +5,8 @@ date = 2016-01-21
 tags = ["Typescript", "PDF", "JSON", "Canvas"]
 [extra]
 github="https://bitbucket.org/PhilipK/cardgenerator/"
+image="../static/images/cardgenerator.PNG"
+description="Denerate some playingcards based on your boardgame collection "
 +++
 
 Based on your BGG collection generate some playingcards.

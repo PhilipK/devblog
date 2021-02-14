@@ -5,6 +5,8 @@ date = 2016-02-27
 tags = ["ELM"]
 [extra]
 github="https://bitbucket.org/PhilipK/elmbgg/"
+image="../static/images/elmbgg.PNG"
+description="A simple rendering of your BGG games using ELM"
 +++
 
 A simple rendering of your BGG games using ELM.
