@@ -5,6 +5,8 @@ date = 2015-11-08
 tags = ["NodeJs", "Socket IO","Websockets","Javascript","Knapsack","ImmutableJS","Redux"]
 [extra]
 github="https://bitbucket.org/PhilipK/boardgamevoter"
+image="../static/images/boardgamevoter.PNG"
+description="Vote for boardgames to play"
 +++
 The idea is that you are sitting with your friends and you really can't figure out what boardgame you to play, and you only have a certain time to play in. So you pull out the "boardgame voter app" and everyone votes on the boardgames they want to play. The app then tries to fit as many games that people really want to play into that timeframe.
 Also, if you had multiple game collections peoples would know which games to bring to gamenight.
