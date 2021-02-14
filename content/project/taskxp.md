@@ -5,7 +5,7 @@ date = 2011-09-16
 tags = ["Android","Java"]
 [extra]
 github="https://bitbucket.org/PhilipK/boardgamevoter"
-image="../static/images/taskxp.PNG"
+image="../static/images/taskxp.png"
 description="My first real Android App"
 +++
 
