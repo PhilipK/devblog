@@ -12,7 +12,7 @@
     <div class="item">
             <div class="image">
                 {% if post.extra.image %}
-                <img  src="{{resize_image(path=post.extra.image, width=240, height=180, op="fill") }}" style="cursor: pointer;" onclick="window.location='{{ post.permalink }}';"></img>
+                <img  class="postimage" src="{{resize_image(path=post.extra.image, width=480, height=360, op="fill") }}" style="cursor: pointer;" onclick="window.location='{{ post.permalink }}';"></img>
                 {% endif %}
             </div>            
             <div class="content">

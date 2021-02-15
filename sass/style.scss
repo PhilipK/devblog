@@ -20,15 +20,6 @@ html {
   background-color: $background-color;
 }
 
-@media (min-width: 768px) {
-  html {
-    max-width: 42em;
-  }
-  .post{
-    font-size: 125%;    
-  }
-}
-
 h1,
 h2,
 h3,
@@ -159,15 +150,15 @@ blockquote {
       transition: color 0.1s ease;
       border-top: none;
 
-      .tag:after{
+      .tag:after {
         content: ", ";
       }
-      .tag:last-child:after{
+      .tag:last-child:after {
         content: "";
       }
       .tags {
         display: inline;
-        list-style: none;        
+        list-style: none;
         li {
           margin-right: 2px;
         }
@@ -186,7 +177,7 @@ blockquote {
     }
 
     .image {
-      width: 175;
+      width: 175px;
       position: relative;
       -webkit-box-flex: 0;
       -webkit-flex: 0 0 auto;
@@ -220,5 +211,69 @@ blockquote {
   :before,
   ::after {
     box-sizing: inherit;
+  }
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 125%;
+    max-width: 42em;
+  }
+  .items .item .image {
+    width: 240px;
+  }
+  .items .item .image img {
+    width: 240px;
+  }
+}
+
+
+@media (min-width: 1600px) {
+  html {
+    font-size: 125%;
+    max-width: (42em * 1.5);
+  }
+  .items .item .image {
+    width: (240px *1.5);
+  }
+  .items .item .image img {
+    width: (240px *1.5);
+  }
+}
+
+@media (max-width: 767px) {
+  .ui.items > .item > .image,
+  .ui.items > .item > .image > img {
+    max-width: 100% !important;
+    width: auto !important;
+    max-height: 250px !important;
+  }
+
+  .ui.items > .item > .image {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .items > .item > .image > img {
+    max-width: 100% !important;
+    width: auto !important;
+    max-height: 250px !important;
+  }
+
+  .ui.items > .item > .image + .content {
+    display: block;
+    padding: 1.5em 0 0;
+    width: 100%;
+  }
+
+  .ui.items > .item {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    margin: 2em 0;
+    margin-top: 2em;
   }
 }
