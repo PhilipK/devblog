@@ -1,3 +1,3 @@
 +++
-title = "Philips Hobby Project"
+title = "Philips Page"
 +++
