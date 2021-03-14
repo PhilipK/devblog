@@ -64,4 +64,4 @@ This first week, I have gotten started, I have a basic grid, units can move, the
 
 ## Next Week
 
-During play testing I found that the game was pretty hard, the way I have implemented the player registers, each card has a priorty, that is pretty hard to keep track of. Next week I will focus on getting the game easier to play, and handling the randomness of the cards by giving you more overview and control of the game.
+During play testing I found that the game was pretty hard, the way I have implemented the player registers, each card has a priorty, that is pretty hard to keep track of. Maybe i will just let each unit have a priority instead, or atleast make it clearer what is going to happen. Next week I will focus on getting the game easier to play, because it is needed to handle  randomness of the cards you are given. 
