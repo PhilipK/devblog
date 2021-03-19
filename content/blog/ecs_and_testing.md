@@ -121,7 +121,7 @@ When I run `cargo test` this runs in a second or two, and i instantly know if my
 
 I am sure you can do something simelar, without using ECS, but it sure is easy to do when you have one.
 
-## Improving your feedbakc loop
+## Improving your feedback loop
 
 The point is: we don't only test for correctness, we can also test for fast feedback.
 
