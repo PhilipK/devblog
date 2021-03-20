@@ -5,7 +5,7 @@ date = 2021-03-20
 tags = ["Rust", "SDL2","Legion","Aseprite","Testing"]
 [extra]
 image="../static/images/robotcards/week2.PNG"
-description="Hello, started"
+description="Keeping it simply"
 +++
 
 ## Progress this week
