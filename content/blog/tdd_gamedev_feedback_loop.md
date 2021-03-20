@@ -1,5 +1,5 @@
 +++
-title = "Using TDD in Gamedev to speed up your feedback loop"
+title = "Using tests to speed up your feedback loop"
 date = 2021-03-19
 [taxonomies]
 tags = ["Rust", "Legion", "ECS", "Testing","TDD","Red, Green, Refactor"]
@@ -8,25 +8,33 @@ image="../static/images/blog/ecs_and_testing/cover.PNG"
 description="When is it worth unit testing games? How and when do i test? And what can we bring with us into non-game-dev?"
 +++
 
-## Finding mistakes early
 
-I like to do Test Driven Development (TDD)! I like to write tests whenever I can, and if I can do them before I do implementation that is better.
+## TL;DR
+
+In my experience, you can speed up your workflow in UI and Game development, by writing tests for the edge/hard-to-reproduce cases.
+
+## TDD
+
 Honestly, I make mistakes all the time, it is part of being human, and when you deal with big interconnected systems it becomes impossible to keep track of everything.
-That is why I like being told that I made a mistake as soon as I can. I think that is why I like Rust as a programming langauge so much. Rusts speed is great and all, but even if it wasn't speedy I would still use it, because it prevents me from making so many mistakes at compile time. Rust fits my temperment.
-But there are still mistakes that a compiler can't catch, that is where tests help!
+That is why I like being told that I made a mistake as soon as I can. I think that is why I Rust. Rusts speed is great, but even if it wasn't speedy I would use it, because it prevents me from making so many mistakes at compile time. Rust fits my temperment.
+There are still mistakes that a compiler can not find for you; for those cases automated tests help.
+I like to do Test Driven Development (TDD)! I like to write tests whenever I can, and if I can do them before I do implementation that is even better. You don't have to like tests, but in this post I will show how I use tests not to "slow me down" but to speed up my development flow and feedback loop.
 
-I have a background of doing "full stack" development meaning, some backend and more frontend. For me it has always been easier to write tests for the backend, a simplified flow for backend code is:
+## Backend vs Ui testing
+
+I have a background in "full stack" development, meaning some backend and more frontend. For me it has always been easier to write tests for the backend, a simplified flow for backend code is:
 
 - Set up a state
 - Call a function that performs some state change
 - Check the state
 
-For UI it is harder, you are always working with a user and a browser, how do you mock that? There are many different workarounds, but the problem is always that you have a tight integration with something that you do not want to test and should not test: the browser and the user.
+For UI it is harder, you are always working with a user and a browser, how do you mock that? The "state change flow" becomes complicated by DOM Changes, Rendering and so on. There are many different workarounds, but the problem is always that you have a tight integration the browser which you do not want to test.
 Besides that, how much do you test the UI? Should you test that a button is the right shade of green? Maybe/Probably not. Should you verify that the UI sends a request to the server when a button is sent? Probably, but what about that transition from left to right? Or that things are alligned to the left?
-A lot of times it is easier just to look at the webpage and realize that something is off.
+Most times it is easier to look at the webpage and "see" that something is off.
 
-## What does this have to do with gamedev?
+## Gamedev
 
+I am currently working on a game build from (almost) scratch (See my weekly devlopment blog [here](@/robotcards/_index.md)), and I am trying to taking my finding from the gamedev world with me into my other other development.
 As far as I can tell, TDD is not that wide spread in game development, maybe on online servers, but not that much in the actual game clients.
 I got to thinking why this is? I think that it is because, like in UI development, a lot of what makes a game is what makes it "feel good" and that is not something that is easy to describe and test for.
 
@@ -123,14 +131,18 @@ I am sure you can do something simelar, without using ECS, but it sure is easy t
 
 ## Improving your feedback loop
 
-The point is: we don't only test for correctness, we can also test for fast feedback.
+The point is: we can use tests for more than verifying correctness, we can use test for fast feedback loops.
 
-I don't have to play to certain a spot in my game, or make a save game that I can load up and verify behavior in. I can run my test, because the test sets up the exactly the world state that would trigger the behaviour I want to verify.
-The magic is not only in the Act or the Assert, it is also in the Arrange.
+By using tests for those hard-to-reprocuce/edge cases, you don't have to play to certain a spot in my game, or make a save game that I can load up and verify behavior in. Just run the tests, because the they set up the a world state that would will the behaviour to verify.
+In general, remember; The magic is not only in the Act or the Assert, it is also in the Arrange.
 
 There are things that are just better to test by running the game, and you can never unit test if a game is fun, or if a "transition from a to be looks right", but you can verify those edge cases, and you can improve your feedback loop.
+If you have to choose, focus on testing the edge cases, instead of the "main flow".
+You will quickly realize if something is wrong with the main flow, if nothing happens when you click a button or if an enemy does not take damage.
+Finding that the whole page crashes if a server gives an "backoff" or that the third unit that gets "squished" does not take damage, that is where tests can help, in both UI and Gamedev.
 
-## Bringing it back to non-game-dev
+## Bringing it back
 
-This brings me back to what we can learn about frontend tests, that are also often neglected. Just like in a game, there are things that you just have to look at and get a feel for ; don't test those! Instead focus on testing those things that have hard to verify logic and scenarios that don't happen often or are hard to set up.
+This brings me back to what we can learn from gamedev about about frontend. Just like in a game, there are things that you just have to look at and get a feel for; don't test those! Instead focus on testing those things that have hard to verify logic and scenarios that don't happen often or are hard to set up.
 Not only because you verify correctness, but because you improve your developer feedback loop and save yourself a lot of time clicking around in a UI.
+Structuring your UI changes into the state -> action -> state flow helps a lot on testability for both ui and gamedev, but remember to use tests to optimize your workflow, not slow it down.
