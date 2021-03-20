@@ -8,12 +8,12 @@ image="../static/images/blog/ecs_and_testing/cover.PNG"
 description="When is it worth unit testing games? How and when do i test? And what can we bring with us into non-game-dev?"
 +++
 
-## TDD
+## Finding mistakes early
 
 I like to do Test Driven Development (TDD)! I like to write tests whenever I can, and if I can do them before I do implementation that is better.
-Honestly, I am a pretty bad developer because I make mistakes, we all do, so I think I am not alone (with probably a few exceptions) we all make a couple of programming mistakes a day.
-I like being told that I made a mistake as soon as I can. I think that is why I like Rust as a programming langauge so much. It is great that it is fast and all, but even if it wasn't I still think I would use it, because it prevents me from making so many mistakes.
-But there are still mistakes that a compiler can not pick up on, so "enter" tests!
+Honestly, I make mistakes all the time, it is part of being human, and when you deal with big interconnected systems it becomes impossible to keep track of everything.
+That is why I like being told that I made a mistake as soon as I can. I think that is why I like Rust as a programming langauge so much. Rusts speed is great and all, but even if it wasn't speedy I would still use it, because it prevents me from making so many mistakes at compile time. Rust fits my temperment.
+But there are still mistakes that a compiler can't catch, that is where tests help!
 
 I have a background of doing "full stack" development meaning, some backend and more frontend. For me it has always been easier to write tests for the backend, a simplified flow for backend code is:
 
