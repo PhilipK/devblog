@@ -1,6 +1,6 @@
 +++
-title = "Week 1"
-date = 2021-06-16
+title = "Robotcards: Week 1"
+date = 2021-03-14
 [taxonomies]
 tags = ["Rust", "SDL2","Legion","Aseprite"]
 [extra]
@@ -48,7 +48,7 @@ Each week i will make one of theese post, then plan the next week (I am using Tr
 
 I will try to do a "sprint planning" each week, to try and keep focus for the week. Also I am trying to keep track of time, since I only have 26 weeks.
 
-I have 3 kids and a dayjob, so I only have an hour each day to work on this project, maybe if I am lucky a bit more on weekends. Lets say 10 hours a week, that leaves me with 260 hours to make this game.... that is not a lot for a game from scratch. SO I really have to keep focus.
+I have 3 kids and a dayjob, so I only have about an hour each day to work on this project, maybe if I am lucky a bit more on weekends. Lets say 10 hours a week, that leaves me with 260 hours to make this game.... that is not a lot for a game from scratch. SO I really have to keep focus.
 
 Each week I have to answer two questions:
 
