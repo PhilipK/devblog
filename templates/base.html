@@ -5,6 +5,9 @@
   <meta charset="utf-8">
   <link rel="stylesheet" href="{{styleurl}}"  >
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% block rss %}
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="{{ get_url(path="atom.xml", trailing_slash=false) }}">
+  {% endblock %}
   <title>PhilipK Devblog</title>
 </head>
 
