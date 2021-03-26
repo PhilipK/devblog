@@ -2,6 +2,51 @@ $accent-color: rgb(218, 88, 2);
 $header-color: rgba(0, 0, 0, 0.87);
 $font-color: rgba(0, 0, 0, 0.75);
 $background-color: white;
+$quote-color: #eee;
+
+
+
+// $dark-accent-color:        #95e0cc  ;
+// $dark-header-color:           #37567a   ;
+// $dark-font-color:         #6b95ad  ;
+// $dark-background-color:       #1c2638    ;
+// $dark-quote-color:     #252446  ;
+
+
+// $dark-accent-color:       #ffce9c    ;
+// $dark-header-color:        #cf7862       ;
+// $dark-font-color:      #a75252   ;
+// $dark-background-color:      #1a080e   ;
+// $dark-quote-color:     #252446  ;
+
+
+// $dark-accent-color:   #fabb64  ;
+// $dark-header-color:    #fd724e  ;
+// $dark-font-color:   #f5ddbc  ;
+// $dark-background-color:   #5f2f45 ;
+// $dark-quote-color:   #a02f40 ;
+
+
+$dark-accent-color:  #eaf0d8 ;
+$dark-header-color:   #596070 ;
+$dark-font-color:  #96a2b3 ;
+$dark-background-color:  #1f1f29 ;
+$dark-quote-color:  #413a42   ;
+
+// $dark-accent-color: #fbbbad;
+// $dark-header-color:   #ee8695  ;
+// $dark-font-color: #4a7a96;
+// $dark-background-color:#292831;
+// $dark-quote-color: #333f58 ;
+
+@media (prefers-color-scheme: dark) {
+
+  img {
+      filter: grayscale(50%);;        
+  }
+
+}
+
 
 * {
   box-sizing: border-box;
@@ -18,6 +63,10 @@ html {
   padding: 1.5em;
   color: $font-color;
   background-color: $background-color;
+  @media (prefers-color-scheme: dark) {
+    background-color: $dark-background-color;
+    color: $dark-font-color;
+  }
 }
 
 h1,
@@ -27,10 +76,17 @@ h4 {
   margin: 2.5rem 0 1.5rem 0;
   line-height: 1.25;
   color: $header-color;
+  @media (prefers-color-scheme: dark) {
+    color: $dark-header-color;
+  }
 }
 
 a {
+  
   color: $accent-color;
+  @media (prefers-color-scheme: dark) {
+    color: $dark-accent-color;  
+  }
   text-decoration: none;
 }
 a:hover,
@@ -44,9 +100,15 @@ p {
   line-height: 1.5;
 }
 p code {
-  background-color: #eee;
+  background-color: $quote-color;
+  @media (prefers-color-scheme: dark) {
+    background-color:  $dark-quote-color ;
+  }
   padding: 0.05em 0.2em;
-  border: 1px solid #ccc;
+  border: 1px solid $quote-color;
+  @media (prefers-color-scheme: dark) {
+    border: 1px solid $dark-quote-color ;
+}
 }
 
 img {
@@ -60,6 +122,9 @@ blockquote {
   padding-left: 1em;
   font-style: italic;
   border-left: solid 1px $accent-color;
+  @media (prefers-color-scheme: dark) {
+    border-left: solid 1px $dark-accent-color;    
+  }
 }
 
 .tags {
@@ -114,6 +179,9 @@ blockquote {
         font-weight: 700;
         font-size: 1.2em;
         color: $header-color;
+        @media (prefers-color-scheme: dark) {
+          color: $dark-header-color;
+        }
       }
     }
 
@@ -133,6 +201,9 @@ blockquote {
       font-size: 1em;
       line-height: 1.4285em;
       color: rgba(0, 0, 0, 0.87);
+      @media (prefers-color-scheme: dark) {        
+        color: $dark-font-color;
+      }
     }
 
     .extra {
@@ -145,6 +216,9 @@ blockquote {
       top: 0;
       left: 0;
       color: rgba(0, 0, 0, 0.4);
+      @media (prefers-color-scheme: dark) {        
+        color: $dark-font-color;
+      }
       box-shadow: none;
       -webkit-transition: color 0.1s ease;
       transition: color 0.1s ease;
