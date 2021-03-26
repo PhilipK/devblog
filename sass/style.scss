@@ -2,7 +2,7 @@ $accent-color: rgb(218, 88, 2);
 $header-color: rgba(0, 0, 0, 0.87);
 $font-color: rgba(0, 0, 0, 0.75);
 $background-color: white;
-$quote-color: #eee;
+$quote-color: #2b303b;
 
 
 
@@ -28,16 +28,16 @@ $quote-color: #eee;
 
 
 $dark-accent-color:  #eaf0d8 ;
-$dark-header-color:   #596070 ;
+$dark-header-color:   #ccd3dd ;
 $dark-font-color:  #96a2b3 ;
 $dark-background-color:  #1f1f29 ;
-$dark-quote-color:  #413a42   ;
+// $dark-quote-color:  #413a42   ;
 
-// $dark-accent-color: #fbbbad;
+$dark-accent-color:  #6b95ad ;
 // $dark-header-color:   #ee8695  ;
 // $dark-font-color: #4a7a96;
 // $dark-background-color:#292831;
-// $dark-quote-color: #333f58 ;
+$dark-quote-color: #282838 ;
 
 @media (prefers-color-scheme: dark) {
 
@@ -100,12 +100,13 @@ p {
   line-height: 1.5;
 }
 p code {
-  background-color: $quote-color;
+  background-color: $dark-background-color;
+  color: $dark-font-color;
   @media (prefers-color-scheme: dark) {
     background-color:  $dark-quote-color ;
   }
   padding: 0.05em 0.2em;
-  border: 1px solid $quote-color;
+  border: 1px solid $dark-background-color;
   @media (prefers-color-scheme: dark) {
     border: 1px solid $dark-quote-color ;
 }
@@ -124,6 +125,19 @@ blockquote {
   border-left: solid 1px $accent-color;
   @media (prefers-color-scheme: dark) {
     border-left: solid 1px $dark-accent-color;    
+  }
+}
+
+body pre {  
+  background-color: $quote-color !important;  
+  padding: 20px;
+  border-radius: 4px;
+}
+
+@media (prefers-color-scheme: dark) {
+  body pre {  
+    background-color: $dark-quote-color !important;  
+    
   }
 }
 
