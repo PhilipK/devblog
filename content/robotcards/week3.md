@@ -5,7 +5,7 @@ date = 2021-03-27
 tags = ["Rust", "Legion"]
 [extra]
 image="../static/images/robotcards/week3.PNG"
-description="Keeping it simple"
+description="Maps and world stacks"
 +++
 
 ## Progress this week
