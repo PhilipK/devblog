@@ -25,7 +25,7 @@ I also got drag and drop and working now. I made several systems that can work i
 Besides I have also figured out how to do the abilities system.
 In the game you use your cards primarrely for programming your units, but to help with the randomness of the card draw, the player can pick some starting "abilities". An ability can take a combination of cards as input, and then performs some kind of action when all the input cards fullfill the criteria.
 
-As an example you can start with an ability that takes two white cards, and turns them into one white card of your choise. This game has input randomness, like games like Slay the Spire and Into the Breach, but besides that, the game is very dependent on context. Getting a "turn left" might be even better than a "attak and deal 10 damage" because it all depends on the current state of the board. Abilities help you mitigate this,  
+As an example you can start with an ability that takes two white cards, and turns them into one white card of your choise. This game has input randomness, like games like Slay the Spire and Into the Breach, but besides that, the game is very dependent on context. Getting a "turn left" might be even better than a "attak and deal 10 damage" because it all depends on the current state of the board. Abilities help you mitigate this.
 
 ## What is fun?
 
