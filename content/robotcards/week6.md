@@ -4,8 +4,8 @@ date = 2021-04-18
 [taxonomies]
 tags = ["Rust"]
 [extra]
-image="../static/images/robotcards/week5.PNG"
-description="Implementing the mockup"
+image="../static/images/robotcards/week6.PNG"
+description="Abilities"
 +++
 
 ## Progress this week
