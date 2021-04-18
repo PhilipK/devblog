@@ -16,6 +16,8 @@ This week I have gotten the ui mockup pretty much implemented. This required a b
 
 One thing I had to change from the mockup, was that I had placed the players cards, and the orbots registers (where you put the cards) on seperate sides of the screen. This ment that you had to move the cards from one of the the screen to the other all the time, this was not good UX. Instead i moved them almost right next to eachother, and then moved the abilities to the right of the screen. This is a classic UI vs UX scenario, because now the screen is a bit "unbalanced" since there is a lot more content on the left than on the right. It is something I will have to fix later.
 
+{{ blogimage(path="../static/images/robotcards/week6.png")}}
+
 ### Drag and Drop
 
 I also got drag and drop and working now. I made several systems that can work in parallel. One system checks if the mouse is held down on a dragable element. Another moves dragged content to the mouse courser, another checks if a card is dropped on something that can take a "card as input", like a robot registry or a robot ability input.
