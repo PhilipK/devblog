@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;style.css"  >
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;atom.xml">
+  
+  <title>PhilipK Devblog</title>
+</head>
+
+<body>
+  <section class="section">
+    <div class="container">
+      
+<h1 class="title">Robotcards: Week 5</h1>
+<p class="subtitle"><strong>2021-04-10</strong></p>
+
+ 
+
+<p><h2 id="progress-this-week">Progress this week</h2>
+<p>This week I was hit with life/personal family stuff, so I did not get nearly as much done as last week. Actually I am surprised that a week has already passed.</p>
+<p>I got two big things done this week tho.</p>
+<ol>
+<li>Changed the way textures are loaded and packed</li>
+<li>Made a high fidelity mockup of the ui for the game</li>
+</ol>
+<div >
+<img  class="blogimage" src="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;processed_images&#x2F;9dc3c8ae66c49a1300.png"></img>
+</div>
+<h2 id="ui-mockup">Ui Mockup</h2>
+<p>The mockup really helped me think about how i wanted the UI to look like.
+The cards cant be too far from the regisers, the hand of crads have to be able to handle at least 10 cards, but should still look good when low on cards.</p>
+<p>Also it let me test my color scheme and figure out how many elements I actually need on screen at a time.</p>
+<p>One big thing is the card design, i looked at a lot of other card games (physical and digital) and I relaized that for digital games, you can keep the card art at big as you want, since you can give detailed descriptions of what the cards do when you hover on them. Once the player has read that once and used the card they will instantly recognize the card and never read the text again. There is no need for that text to take up ui space all the time.</p>
+<h2 id="using-enums-for-texture-loading">Using enums for texture loading</h2>
+<p>One problem that was slowing me down was that every time I would have to show a sprite on screen, I would have to make a new png file, save that in the folder, add it in the list of sprites, add its size, and so on and so on.</p>
+<p>I made new Enum based loading system, that lets me load textures much easier and much more reliable. I will make a post about it since I think it might be beneficial for others too.</p>
+<h2 id="what-is-fun">What is fun?</h2>
+<p>I really like the ui look and feel.</p>
+<h2 id="what-is-not-fun">What is not fun?</h2>
+<p>The map and units also need some better art</p>
+<h2 id="next-week">Next week</h2>
+<p>I think that the next week will focus on:</p>
+<p>Implementing the ui mockup i made.
+Maybe get started on card drag and hover effects</p>
+</p>
+
+<div>
+  <h3>Tags</h3>
+  <ul class="tags">
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;rust&#x2F;">Rust</a></li>
+    
+  </ul>
+</div>
+
+
+    </div>
+  </section>
+</body>
+
+</html>

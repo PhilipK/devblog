@@ -1,0 +1,988 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+	<title></title>
+	<link href="https://philipk.github.io/devblog/atom.xml" rel="self" type="application/atom+xml"/>
+  <link href="https://philipk.github.io/devblog/"/>
+	<generator uri="https://www.getzola.org/">Zola</generator>
+	<updated>2021-06-09T00:00:00+00:00</updated>
+	<id>https://philipk.github.io/devblog/atom.xml</id>
+	<entry xml:lang="en">
+		<title>Robotcards: Week 9</title>
+		<published>2021-06-09T00:00:00+00:00</published>
+		<updated>2021-06-09T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/robotcards/week9/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/robotcards/week9/</id>
+		<content type="html">&lt;h2 id=&quot;progress-this-week&quot;&gt;Progress this week&lt;&#x2F;h2&gt;
+&lt;p&gt;This week I have been writing commit messages as if they where change log message. Also I have set up a weekly releast job on github actions.
+This meens that I can now just copy paste the changelog from that release into this blog :-)&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;features&quot;&gt;Features&lt;&#x2F;h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Deselect unit with click while selected&lt;&#x2F;li&gt;
+&lt;li&gt;Make optional text word wrap&lt;&#x2F;li&gt;
+&lt;li&gt;Show card description on hover&lt;&#x2F;li&gt;
+&lt;li&gt;Show card names on hover&lt;&#x2F;li&gt;
+&lt;li&gt;Show health bars on mouse hover&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;div &gt;
+&lt;img  class=&quot;blogimage&quot; src=&quot;https:&amp;#x2F;&amp;#x2F;philipk.github.io&amp;#x2F;devblog&amp;#x2F;processed_images&amp;#x2F;d8c4539fb55d552200.png&quot;&gt;&lt;&#x2F;img&gt;
+&lt;&#x2F;div&gt;
+&lt;h3 id=&quot;bug-fixes&quot;&gt;Bug Fixes&lt;&#x2F;h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Correct click areas of isometric board&lt;&#x2F;li&gt;
+&lt;li&gt;Enable hardware acceleration&lt;&#x2F;li&gt;
+&lt;li&gt;Fix crash when loading a save game&lt;&#x2F;li&gt;
+&lt;li&gt;Remove redundtant physics systems&lt;&#x2F;li&gt;
+&lt;li&gt;Simplify health indicator system&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;what-is-fun&quot;&gt;What is fun?&lt;&#x2F;h2&gt;
+&lt;p&gt;Making this game is still very very fun.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;what-is-not-fun&quot;&gt;What is not fun?&lt;&#x2F;h2&gt;
+&lt;p&gt;I still need to get the game into a &amp;quot;show it off to friends&amp;quot; state. Right now it feel very very debug.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;next-week&quot;&gt;Next week&lt;&#x2F;h2&gt;
+&lt;p&gt;My parents in law are coming by to stay with us next week, so my progress might be limited.&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Robotcards: Week 8</title>
+		<published>2021-05-02T00:00:00+00:00</published>
+		<updated>2021-05-02T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/robotcards/week8/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/robotcards/week8/</id>
+		<content type="html">&lt;h2 id=&quot;progress-this-week&quot;&gt;Progress this week&lt;&#x2F;h2&gt;
+&lt;p&gt;This week I re-worked how fonts work, made some github actions, a few more cards and abilities and implemented picking a reward after a won battle.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;font-textures&quot;&gt;Font Textures&lt;&#x2F;h2&gt;
+&lt;p&gt;One thing that had been bugging me for a while was how fonts where handled. The SDL2 rust wrapper had some very &amp;quot;hard to work with&amp;quot; lifetimes that made it hard to keep a font loaded in memrory.
+The way I got around this before was to keep track of every text in the game world, and a map of every text that was generated into a texture.
+There where a few problems with this:&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;the-problem&quot;&gt;The problem&lt;&#x2F;h3&gt;
+&lt;p&gt;Every time I needed a new font I would have to:&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;serialize the font file to  disk (in a temp folder)&lt;&#x2F;li&gt;
+&lt;li&gt;load that file into memory through SDL2&lt;&#x2F;li&gt;
+&lt;li&gt;Generate the texture (with the given color) for that text&lt;&#x2F;li&gt;
+&lt;li&gt;Save the texture in a hashmap (key was text and font colour)&lt;&#x2F;li&gt;
+&lt;li&gt;THEN i could render the texture to the screen&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;While it was not something that was an imediate problem, I was noticing that the memory use of the game would just rise as more and more different text was shown on screen.
+And I really didn&#x27;t like that I had to touch the harddrive so often.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;the-solution&quot;&gt;The solution&lt;&#x2F;h3&gt;
+&lt;p&gt;I found this little tool online &lt;a href=&quot;https:&#x2F;&#x2F;evanw.github.io&#x2F;font-texture-generator&#x2F;&quot;&gt;https:&#x2F;&#x2F;evanw.github.io&#x2F;font-texture-generator&#x2F;&lt;&#x2F;a&gt;.
+It lets you generate a texturemap (and a json file that descripbes the position and size of each character) from a font.
+I rewrote the renderer (it is now much leaner) and made a new system that looks for anything with a TextSprite components. It then generates a sprite batch (a sprite for each character in the text) from the text and each of those sprites to the batch.&lt;&#x2F;p&gt;
+&lt;div &gt;
+&lt;img  class=&quot;blogimage&quot; src=&quot;https:&amp;#x2F;&amp;#x2F;philipk.github.io&amp;#x2F;devblog&amp;#x2F;processed_images&amp;#x2F;6d8cc0f991ff9e1000.png&quot;&gt;&lt;&#x2F;img&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;This also means that I can remove the font from assets, and SDL2&#x27;s font rendering feature.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;the-result&quot;&gt;The result&lt;&#x2F;h3&gt;
+&lt;p&gt;The end result is that I now can handle multiple fonts, the renderer is much simpler (it ONLY renders sprites to the screen),  the game uses a lot less memory and the binary is a lot smaller.&lt;&#x2F;p&gt;
+&lt;div &gt;
+&lt;img  class=&quot;blogimage&quot; src=&quot;https:&amp;#x2F;&amp;#x2F;philipk.github.io&amp;#x2F;devblog&amp;#x2F;processed_images&amp;#x2F;f6a4695257b3cc7700.png&quot;&gt;&lt;&#x2F;img&gt;
+&lt;&#x2F;div&gt;
+&lt;div &gt;
+&lt;img  class=&quot;blogimage&quot; src=&quot;https:&amp;#x2F;&amp;#x2F;philipk.github.io&amp;#x2F;devblog&amp;#x2F;processed_images&amp;#x2F;a272706fbf098a2c00.png&quot;&gt;&lt;&#x2F;img&gt;
+&lt;&#x2F;div&gt;
+&lt;h2 id=&quot;github-actions&quot;&gt;Github Actions&lt;&#x2F;h2&gt;
+&lt;p&gt;After hearing this talk:&lt;&#x2F;p&gt;
+&lt;div &gt;
+    &lt;iframe
+        src=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;embed&#x2F;t9HRzE7_2Xc&quot;
+        webkitallowfullscreen
+        mozallowfullscreen
+        allowfullscreen&gt;
+    &lt;&#x2F;iframe&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;I looked into how I could start out early with a little devops for my game.
+I use github, so I looked into github acitons.
+I was very surpriced how easy it was to implement github actions.&lt;&#x2F;p&gt;
+&lt;p&gt;Initially I made an Action that would test my unit tests on linux, macos and windows... then I found out that one minute of build time on macos costs you 10 minutes of billable minutes.... So now I have a linux action that runs on push to main branch that runs tests. I also set up scheduled action that builds a windows release and generates a changelog every saturday.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;what-is-fun&quot;&gt;What is fun?&lt;&#x2F;h2&gt;
+&lt;p&gt;The game is still fun to play&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;what-is-not-fun&quot;&gt;What is not fun?&lt;&#x2F;h2&gt;
+&lt;p&gt;Overworld still does not work and still too few levels.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;next-week&quot;&gt;Next week&lt;&#x2F;h2&gt;
+&lt;p&gt;Working more on getting the first playable Alpha&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Robotcards: Week 7</title>
+		<published>2021-04-25T00:00:00+00:00</published>
+		<updated>2021-04-25T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/robotcards/week7/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/robotcards/week7/</id>
+		<content type="html">&lt;h2 id=&quot;progress-this-week&quot;&gt;Progress this week&lt;&#x2F;h2&gt;
+&lt;p&gt;This week I didn&#x27;t have much time to work on the project (family and work took all my free time), but I did get a few things done.&lt;&#x2F;p&gt;
+&lt;p&gt;First I got to plan out everything that is needed for the first &amp;quot;friends shareable alpha&amp;quot;. Meaning, I have set a goal that in two weeks, I need to have a playable build, that is finish enough that I can get feedback from a few close friends. 
+There are quite a few things that needs fixed before that.&lt;&#x2F;p&gt;
+&lt;p&gt;I also got to implement a few more cards and abilities, and I have made the abilities code a lot more generic (so that it is easier to implement abilities).&lt;&#x2F;p&gt;
+&lt;p&gt;Currently I am also working on redoing how fonts are rendered. SDL2 font rendering has always been a problem for me, so instead I am redoing by just using a texture generated from a font, that contains one of each character i need. Then I can use the sprite batch to render one character at a time.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;what-is-fun&quot;&gt;What is fun?&lt;&#x2F;h2&gt;
+&lt;p&gt;The new cards and abilities show that it is going to be fun.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;what-is-not-fun&quot;&gt;What is not fun?&lt;&#x2F;h2&gt;
+&lt;p&gt;Same as last week: You can still only play one level, and there are no rewards for finising a level.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;next-week&quot;&gt;Next week&lt;&#x2F;h2&gt;
+&lt;p&gt;Same as last week: Working on playing more than one level, and getting rewards inbetween.&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Robotcards: Week 6</title>
+		<published>2021-04-18T00:00:00+00:00</published>
+		<updated>2021-04-18T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/robotcards/week6/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/robotcards/week6/</id>
+		<content type="html">&lt;h2 id=&quot;progress-this-week&quot;&gt;Progress this week&lt;&#x2F;h2&gt;
+&lt;p&gt;This week I have gotten the ui mockup pretty much implemented. This required a bit of rework on how ui sprites where rendered. I found a bug that has been there since the beginning on the game, which ment I had to rewrite a lot of &amp;quot;hardcoded&amp;quot; positions for ui elements. Now the ui can scale with resolution and things are not just pixel hardcoded.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;ui-vs-ux&quot;&gt;UI vs UX&lt;&#x2F;h3&gt;
+&lt;p&gt;One thing I had to change from the mockup, was that I had placed the players cards, and the orbots registers (where you put the cards) on seperate sides of the screen. This ment that you had to move the cards from one of the the screen to the other all the time, this was not good UX. Instead i moved them almost right next to eachother, and then moved the abilities to the right of the screen. This is a classic UI vs UX scenario, because now the screen is a bit &amp;quot;unbalanced&amp;quot; since there is a lot more content on the left than on the right. It is something I will have to fix later.&lt;&#x2F;p&gt;
+&lt;div &gt;
+&lt;img  class=&quot;blogimage&quot; src=&quot;https:&amp;#x2F;&amp;#x2F;philipk.github.io&amp;#x2F;devblog&amp;#x2F;processed_images&amp;#x2F;3fef571828e3569200.png&quot;&gt;&lt;&#x2F;img&gt;
+&lt;&#x2F;div&gt;
+&lt;h3 id=&quot;drag-and-drop&quot;&gt;Drag and Drop&lt;&#x2F;h3&gt;
+&lt;p&gt;I also got drag and drop and working now. I made several systems that can work in parallel. One system checks if the mouse is held down on a dragable element. Another moves dragged content to the mouse courser, another checks if a card is dropped on something that can take a &amp;quot;card as input&amp;quot;, like a robot registry or a robot ability input.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;abilities-to-mitegate-randomness&quot;&gt;Abilities to mitegate randomness&lt;&#x2F;h3&gt;
+&lt;p&gt;Besides I have also figured out how to do the abilities system.
+In the game you use your cards primarrely for programming your units, but to help with the randomness of the card draw, the player can pick some starting &amp;quot;abilities&amp;quot;. An ability can take a combination of cards as input, and then performs some kind of action when all the input cards fullfill the criteria.&lt;&#x2F;p&gt;
+&lt;p&gt;As an example you can start with an ability that takes two white cards, and turns them into one white card of your choise. This game has input randomness, like games like Slay the Spire and Into the Breach, but besides that, the game is very dependent on context. Getting a &amp;quot;turn left&amp;quot; might be even better than a &amp;quot;attak and deal 10 damage&amp;quot; because it all depends on the current state of the board. Abilities help you mitigate this.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;what-is-fun&quot;&gt;What is fun?&lt;&#x2F;h2&gt;
+&lt;p&gt;Abilities already make the game more enjoyable&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;what-is-not-fun&quot;&gt;What is not fun?&lt;&#x2F;h2&gt;
+&lt;p&gt;You can still only play one level, and there are no rewards for finising a level.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;next-week&quot;&gt;Next week&lt;&#x2F;h2&gt;
+&lt;p&gt;Working on playing more than one level, and getting rewards inbetween.&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Robotcards: Week 5</title>
+		<published>2021-04-10T00:00:00+00:00</published>
+		<updated>2021-04-10T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/robotcards/week5/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/robotcards/week5/</id>
+		<content type="html">&lt;h2 id=&quot;progress-this-week&quot;&gt;Progress this week&lt;&#x2F;h2&gt;
+&lt;p&gt;This week I was hit with life&#x2F;personal family stuff, so I did not get nearly as much done as last week. Actually I am surprised that a week has already passed.&lt;&#x2F;p&gt;
+&lt;p&gt;I got two big things done this week tho.&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;Changed the way textures are loaded and packed&lt;&#x2F;li&gt;
+&lt;li&gt;Made a high fidelity mockup of the ui for the game&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;div &gt;
+&lt;img  class=&quot;blogimage&quot; src=&quot;https:&amp;#x2F;&amp;#x2F;philipk.github.io&amp;#x2F;devblog&amp;#x2F;processed_images&amp;#x2F;9dc3c8ae66c49a1300.png&quot;&gt;&lt;&#x2F;img&gt;
+&lt;&#x2F;div&gt;
+&lt;h2 id=&quot;ui-mockup&quot;&gt;Ui Mockup&lt;&#x2F;h2&gt;
+&lt;p&gt;The mockup really helped me think about how i wanted the UI to look like.
+The cards cant be too far from the regisers, the hand of crads have to be able to handle at least 10 cards, but should still look good when low on cards.&lt;&#x2F;p&gt;
+&lt;p&gt;Also it let me test my color scheme and figure out how many elements I actually need on screen at a time.&lt;&#x2F;p&gt;
+&lt;p&gt;One big thing is the card design, i looked at a lot of other card games (physical and digital) and I relaized that for digital games, you can keep the card art at big as you want, since you can give detailed descriptions of what the cards do when you hover on them. Once the player has read that once and used the card they will instantly recognize the card and never read the text again. There is no need for that text to take up ui space all the time.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;using-enums-for-texture-loading&quot;&gt;Using enums for texture loading&lt;&#x2F;h2&gt;
+&lt;p&gt;One problem that was slowing me down was that every time I would have to show a sprite on screen, I would have to make a new png file, save that in the folder, add it in the list of sprites, add its size, and so on and so on.&lt;&#x2F;p&gt;
+&lt;p&gt;I made new Enum based loading system, that lets me load textures much easier and much more reliable. I will make a post about it since I think it might be beneficial for others too.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;what-is-fun&quot;&gt;What is fun?&lt;&#x2F;h2&gt;
+&lt;p&gt;I really like the ui look and feel.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;what-is-not-fun&quot;&gt;What is not fun?&lt;&#x2F;h2&gt;
+&lt;p&gt;The map and units also need some better art&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;next-week&quot;&gt;Next week&lt;&#x2F;h2&gt;
+&lt;p&gt;I think that the next week will focus on:&lt;&#x2F;p&gt;
+&lt;p&gt;Implementing the ui mockup i made.
+Maybe get started on card drag and hover effects&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Robotcards: Week 4</title>
+		<published>2021-04-04T00:00:00+00:00</published>
+		<updated>2021-04-04T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/robotcards/week4/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/robotcards/week4/</id>
+		<content type="html">&lt;h2 id=&quot;progress-this-week&quot;&gt;Progress this week&lt;&#x2F;h2&gt;
+&lt;p&gt;This week has been easter vacation, i expected that I would get a lot more done than normal. But instead I have spend time with family.&lt;&#x2F;p&gt;
+&lt;p&gt;I have finished about 21 points, which is a lot more than usual, so maybe i should expected that I can do 13 points in a week instead of 10.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;sprite-batch&quot;&gt;Sprite batch&lt;&#x2F;h2&gt;
+&lt;p&gt;One thing that I should have thought of doing a lot earlier is sprite batches as a component. Meaning a single entity can have a sprite batch that is a stack of sprites that will be rendered in order (first on bottom).
+As an example a card can cotain a background, a color and an icon, before I would make one entity pr sprite, now i can have a single entity (which also is how I think of a card, as one entity) but with multiple sprites.
+This too a bit of rewrite of the render.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;premature-optimization&quot;&gt;Premature optimization&lt;&#x2F;h2&gt;
+&lt;p&gt;When I had to redo a bit of the render I thought to myself, wow this code looks really unoptimized. What i do is I find every single sprite to render, then i add them to a list and then sort that list based on the sprites position and its &amp;quot;z-index&amp;quot;. This is to prevent a background sprite from overlapping a foreground sprite. I took a break and thought how I could improve it, and came up with all kinds of advanced ways of improving it, including a priority heap solution... but I thought, i better profile my game to see where it is slow.
+I used AMD uProf because that is what seemed to work on windows. The results where ... wierd... the most expensive function was something from the library, looks like it was what schedules all the different systems in the ECS. I doug into it for like an hour... then i thought, how much cpu is this game actually using?
+On my AMD Ryzen 3600 i takes up 0.1% CPU and 30mb ram, so I think that ANY optimization i would do to the renderer right now would be premature.
+I am constantly surpriced at how fast things can get in Rust or just in programming in general when you don&#x27;t have to deal with IO.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;team-select&quot;&gt;Team select&lt;&#x2F;h2&gt;
+&lt;p&gt;This week I made a team selection screen. One of my favorite feature of the game Into The Breach is that you can pick 3 robots to make up your team for the run. It gives a lot of varirity and gives control in the randomness of a &amp;quot;rouge-like&amp;quot;. In slay the spire, you select a &amp;quot;person&amp;quot; to play as, but the biggest difference between the players are the cards that they can get.
+In my game my first idea was to also have 3 units that you control, but while designeing that select screen, I thought &amp;quot;what if these players are not the direct units, but only control the starting cards and what kind of cards you get offered as rewards as the game goes on&amp;quot;.&lt;&#x2F;p&gt;
+&lt;p&gt;The current design is that the team members are &amp;quot;workers&amp;quot; on the game run, so a programmer gets a lot of basic movement cards, since they can move the features around, while the artist gets cards that can create things and so on.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;overworld&quot;&gt;Overworld&lt;&#x2F;h2&gt;
+&lt;p&gt;I also made the overworl this week. The overworld lets you move from skirmish to skirmish, and shows you the next options you have for skirmishes.
+I will go more into detail on this once I have the core gameplay more narrowed down.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;what-is-fun&quot;&gt;What is fun?&lt;&#x2F;h2&gt;
+&lt;p&gt;I am excited for the deckbuilding and creating a starter deck for each run.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;what-is-not-fun&quot;&gt;What is not fun?&lt;&#x2F;h2&gt;
+&lt;p&gt;There are only 2 level types and the goals are still not clear, so I have to work on that.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;next-week&quot;&gt;Next week&lt;&#x2F;h2&gt;
+&lt;p&gt;I think that the next week will focus on:&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;Abilities&lt;&#x2F;li&gt;
+&lt;li&gt;Picking rewards &#x2F; Deck Building&lt;&#x2F;li&gt;
+&lt;li&gt;Levels and Goals&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;While i am doing that I will work on sprites and card art.&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Robotcards: Week 3</title>
+		<published>2021-03-27T00:00:00+00:00</published>
+		<updated>2021-03-27T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/robotcards/week3/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/robotcards/week3/</id>
+		<content type="html">&lt;h2 id=&quot;progress-this-week&quot;&gt;Progress this week&lt;&#x2F;h2&gt;
+&lt;p&gt;This has been a productive week. There is not much new visually, but a lot of stuff has happened &amp;quot;behind the scenes&amp;quot;&lt;&#x2F;p&gt;
+&lt;p&gt;This week i have finished 16.5 storypoints, last week i finished 9.5 storypoints and week 1 was 13.5. Again it looks like it is somewhere around 10 points pr week, next week i will adjust.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;tempate-based-maps&quot;&gt;Tempate based maps&lt;&#x2F;h3&gt;
+&lt;p&gt;For the battles i need maps. I could try to make a procedual generator, but it would need a lot of finetuning to make fair and interesting maps. So instead I am going with a &amp;quot;Spelunky&amp;quot; map generator. Meaning, i use a template for the map, and then some sub parts of the template are optional.&lt;&#x2F;p&gt;
+&lt;p&gt;As a level editor I use a simple pixel editor. I have written a very small program that maps each pixel to a &amp;quot;map tile type&amp;quot;, one for empty one for friendly unit, one for enemy and so on. The program then saves a &amp;quot;output.level&amp;quot; file that is just a byte for each map tile, I also store the dimentions of the map. So a 10x10 map will be 102 bytes on disk.&lt;&#x2F;p&gt;
+&lt;p&gt;For each level I use Rusts &lt;a href=&quot;https:&#x2F;&#x2F;doc.rust-lang.org&#x2F;std&#x2F;macro.include_bytes.html&quot;&gt;include_bytes&lt;&#x2F;a&gt; to include the level in the executable.&lt;&#x2F;p&gt;
+&lt;p&gt;Now I just need to make a lot of interesting templates, also at some point I will have to add more metadata to each level, like what the goal of the level is.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;a-good-flow-for-defining-features&quot;&gt;A good flow for defining features&lt;&#x2F;h3&gt;
+&lt;p&gt;My wife got my a A4 notepad and a &lt;a href=&quot;https:&#x2F;&#x2F;www.amazon.com&#x2F;Pilot-Retractable-Erasable-Assorted-Disappear&#x2F;dp&#x2F;B009QYH644&quot;&gt;Frixion&lt;&#x2F;a&gt; ball pen that is also erasable. I got a lot of the &amp;quot;bigger plan&amp;quot; for the game sketched out this week. My flow  from feature idea to completion is currently as follows:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Sketch out the idea on paper untill I have a pretty good idea about how it would work, including if it is possible to implement.&lt;&#x2F;li&gt;
+&lt;li&gt;Create a task for it in the &amp;quot;inbox backlog&amp;quot; in trello, and add a picture of the notepad to the card.&lt;&#x2F;li&gt;
+&lt;li&gt;Try to define how many story points this task is, at this point it is normally not possible, so i have to:&lt;&#x2F;li&gt;
+&lt;li&gt;Define a pretty detailed &amp;quot;todo&amp;quot; list for the task, including &amp;quot;create this component&amp;quot; &amp;quot;make system X&amp;quot; &amp;quot;make a placeholder sprite&amp;quot;&lt;&#x2F;li&gt;
+&lt;li&gt;After defining tasks, the task is usally detailed enough that I have decided the features scope and have a good overview&lt;&#x2F;li&gt;
+&lt;li&gt;Implement the code, step by step following the list&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;This flow is great for me, because a lot of the tasks do not need access to the code. I have kids, but I might get a great idea when doing the dishes, so I just jot it down on the paper and then I know I can handle it later. It is also great because it is not always that I have enough brain capacity at the end of the day to think &amp;quot;big broad abstract ideas&amp;quot;. At those (sleepy) times it is nice to know that &amp;quot;past Philip&amp;quot; has already made an easy to follow list for me (Thanks Past Philip!).&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;world-stack&quot;&gt;World stack&lt;&#x2F;h3&gt;
+&lt;p&gt;A problem I had about the game was how I would switch between menues, and one skirmish and the next and the main menu. Basicly how would I transition from one screen to the next?&lt;&#x2F;p&gt;
+&lt;p&gt;I came up with a concept, where instead of operation on one &lt;a href=&quot;https:&#x2F;&#x2F;docs.rs&#x2F;legion&#x2F;0.4.0&#x2F;legion&#x2F;struct.World.html&quot;&gt;Legion World&lt;&#x2F;a&gt; i made a &amp;quot;stack&amp;quot; of game screens. Each game screen contains a world and a &lt;a href=&quot;https:&#x2F;&#x2F;docs.rs&#x2F;legion&#x2F;0.4.0&#x2F;legion&#x2F;systems&#x2F;struct.Schedule.html&quot;&gt;system schedule&lt;&#x2F;a&gt;.
+When rendering the stack worlds are rendered bottom up, so if you are in the middle of a game, but you push the ESC button to open the pause menu, a &amp;quot;Pause Screen&amp;quot; is just pushed on top of the current game screen. Since only the top screen gets to execute its systems the screens below are paused, but still rendered.
+This makes it very easy to go from one world to another, while maybe still keeping the old screen in memory.&lt;&#x2F;p&gt;
+&lt;p&gt;I made a main menu , battle screen, and pause menu so far. The main menu can start a battle by clicking the new game. All it has to do is to push the battle screen on top of the stack (actually it just sets a value &amp;quot;transition resource&amp;quot; and then another system does the hard work).
+This should speed up future development a lot.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;decided-on-a-theme&quot;&gt;Decided on a theme&lt;&#x2F;h3&gt;
+&lt;p&gt;I have a general idea of the theme of the game now. It is going to be a bit meta.&lt;&#x2F;p&gt;
+&lt;p&gt;You program &amp;quot;features&amp;quot; but you have to fight off all the &amp;quot;bugs&amp;quot; untill you make it to the end of the run &amp;quot;Launch Day&amp;quot;.
+The idea fo the title was by my friend and colleague &lt;a href=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;ffMathy&quot;&gt;@ffMathy&lt;&#x2F;a&gt; so kudus to him.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;blog-video-every-second-week-instead&quot;&gt;Blog&#x2F;Video every second week instead&lt;&#x2F;h3&gt;
+&lt;p&gt;Last weeks blog did not really spawn any discussions or give me that much feedback, so I think I will transition to doing a video every second week instead.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;what-is-fun&quot;&gt;What is fun?&lt;&#x2F;h2&gt;
+&lt;p&gt;I am happy that I still get stuck just playing the game myself, when I should be doing other stuff.
+It is still very rough, but the core loop of the game holds up (for me atleast).&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;what-is-not-fun&quot;&gt;What is not fun?&lt;&#x2F;h2&gt;
+&lt;p&gt;I think that i need to start on the overworld, the stuff that connects one skirmish to another. While the single battles are fun, I think I can now (after the refactor) start the work on the overworld.&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Robotcards: Week 2</title>
+		<published>2021-03-20T00:00:00+00:00</published>
+		<updated>2021-03-20T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/robotcards/week2/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/robotcards/week2/</id>
+		<content type="html">&lt;h2 id=&quot;progress-this-week&quot;&gt;Progress this week&lt;&#x2F;h2&gt;
+&lt;p&gt;This week i have finished 9.5 storypoints, last week i finished 13.5 storypoints. So it looks like my original guess that I will probably be able to finish 10 storypoints every week is just about right.&lt;&#x2F;p&gt;
+&lt;p&gt;I think there are two main reasons that i finished less points this week:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;It was my birthday&lt;&#x2F;li&gt;
+&lt;li&gt;I did a lot of things I had not originally planned (sprint scope creep)&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Normally bringing new things into a sprint is pretty bad, but this is my hobby project and I decicded that as long as i know I can finish close to the original 10 points a week, I should do what makes me happy or I think is important right now.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;a-simplified-gamestate-for-the-ai-to-work-on&quot;&gt;A simplified gamestate for the AI to work on&lt;&#x2F;h3&gt;
+&lt;p&gt;To make navigation and Enemy planning work, I had to create a simplified world state representation and perfrom my code logic on that state.
+Also i had to sync that game state with my ECS, originally I had thought that I could just use the ECS, but queriying the ECS every time i needed to know &amp;quot;if a unit was next to another unit&amp;quot; was slow and a chore to write.&lt;&#x2F;p&gt;
+&lt;p&gt;I ended up with a grid resource that keeps the board game state and can perform actions on it.&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code class=&quot;language-Rust&quot; data-lang=&quot;Rust&quot;&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;#[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;derive&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;(Debug, Clone, Serialize, Deserialize)]
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub struct &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;Grid {
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;height&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;usize&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;,
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;width&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;usize&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;,
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;content&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;: Vec&amp;lt;GridContent&amp;gt;,
+}
+
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub enum &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;GridContent {
+    Blocker(Entity),
+    Unit(Entity),
+    Enemy(Entity),
+    Empty,
+}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;sup&gt;
+Notice the Entity inside the content here, that is the grids only &quot;link&quot; to the ECS, so information about the content in the grid is still stored in the ECS
+&lt;&#x2F;sup&gt;
+&lt;p&gt;To keep the two systems in check, I perform the changes on the grid, with for example a &lt;code&gt;perform_move&lt;&#x2F;code&gt;:&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code class=&quot;language-Rust&quot; data-lang=&quot;Rust&quot;&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;perform_move&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;(
+        &amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;,
+        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;direction&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;: &amp;amp;CardinalDirection,
+        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;from&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;: (&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;usize&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;usize&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;),
+        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;command_buffer&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;: &amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; CommandBuffer,
+    ) -&amp;gt; MoveResult {
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;After that I have a Legion ECS system that updates the positions of units based on their value in the grid:&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code class=&quot;language-Rust&quot; data-lang=&quot;Rust&quot;&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;#[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;system&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;]
+#[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;write_component&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;(PositionComp)]
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;update_position&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;world&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;: &amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; SubWorld, #[resource] &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;grid&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;: &amp;amp;GridResource) {
+    grid.grid
+        .content
+        .&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;iter&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;()
+        .&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;enumerate&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;()
+        .&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;for_each&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;(|(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;index&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;item&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;)| &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;match&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; item {
+            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;crate&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;::resources::GridContent::Blocker(entity)
+            | &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;crate&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;::resources::GridContent::Unit(entity)
+            | &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;crate&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;::resources::GridContent::Enemy(entity) =&amp;gt; {
+                &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let mut&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; entry = world
+                    .&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;entry_mut&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;(*entity)
+                    .&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;expect&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;expeted map entity to have an entry&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;);
+                &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; position = entry
+                    .get_component_mut::&amp;lt;PositionComp&amp;gt;()
+                    .&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;expect&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;anything in map should have position&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;);
+                &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; grid_pos = grid.grid.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;index_to_xy&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;(index);
+                position.p = grid.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;grid_to_world_pos&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;(grid_pos).&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;into&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;();
+            }
+            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;crate&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;::resources::GridContent::Empty =&amp;gt; {}
+        })
+}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;There are many posibilites for performance improvements here, but this is fast enough for me, since we are talking max 100 entities that needs updated.&lt;&#x2F;p&gt;
+&lt;p&gt;This split also ment that I realized that i could use TDD for this game to improve my workflow, i wrote a blogpost about it &lt;a href=&quot;https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;blog&#x2F;tdd-gamedev-feedback-loop&#x2F;&quot;&gt;Here&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;inlining-assets&quot;&gt;Inlining assets&lt;&#x2F;h2&gt;
+&lt;p&gt;One thing that was just a &amp;quot;fun to do&amp;quot; thing, was inlining assets directly in the game executable. Currently the game sits at 4709 KB, when compressed that is 1513 KB and that is a standalone executable, no dependencies to install first.
+It is really fun to me that my game can fit on a floppy disk, if i decide to make a web version the small game size is going to be great for load times.&lt;&#x2F;p&gt;
+&lt;p&gt;Inlining the assets was a pretty small rewrite using rusts &lt;a href=&quot;https:&#x2F;&#x2F;doc.rust-lang.org&#x2F;std&#x2F;macro.include_bytes.html&quot;&gt;include_bytes&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;isometric-perspective&quot;&gt;Isometric perspective&lt;&#x2F;h2&gt;
+&lt;p&gt;I also decided to try out making the game use a isometric perspective after seeing this video:&lt;&#x2F;p&gt;
+&lt;div &gt;
+    &lt;iframe
+        src=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;embed&#x2F;0fZXlxtMbC0&quot;
+        webkitallowfullscreen
+        mozallowfullscreen
+        allowfullscreen&gt;
+    &lt;&#x2F;iframe&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;I really like the result, the one downside is that I can tell that I am going to have to &amp;quot;relearn&amp;quot; how to do pixel art in that perspective. For now everything is just placeholder&#x2F;debug art. I will have to dedicate some weeks to making the art when I have more of the gameplay narrowed down. There is no reason to make an awesome looking robot if it never gets used.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;simplifying-concepts&quot;&gt;Simplifying concepts&lt;&#x2F;h2&gt;
+&lt;p&gt;This week i tried to simplify the game concepts. Before a unit had registers, and each register held a prioritiezed action (move forward , 3) or (rotate left , 1) then when running the &amp;quot;execute&amp;quot; phase of the game where the robots execute heir programming the next lowest action with the lowest priority score would perform ONE action and then the next and so on and so on. This was pretty confusing and hard to deal with in the planning phase. Instead in week 2, a unit has a priority score, and the unit with the lowest score goes first. A units score is the sum of its cards priorities. This introduces some interesting gameplay &amp;quot;tradeoffs&amp;quot;;  play a lot of expensive cards (like attacks) but then go last where the whole world might have changed, or play a few &amp;quot;cheap&amp;quot; cards to make sure you go first?&lt;&#x2F;p&gt;
+&lt;p&gt;Another thing was that a units registers would &amp;quot;wrap around&amp;quot;, meaning when you finished the last action in the register the next action would be the first in the register. Units also had &amp;quot;points&amp;quot;, they could maybe only have 3 registers, but have 5 action points, so the first register would be performed twice. This was also way too complicated to keep track of, and did not really introduce interesting complexity, just noise.
+In week 2, the points are removed, and when you reach the end of the register the units turn ends. Next turn you start from register 0 again.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;game-visibility&quot;&gt;Game Visibility&lt;&#x2F;h2&gt;
+&lt;p&gt;This week i got to thinking &amp;quot;what if my game is released and then noone plays it? How would I feel?&amp;quot; to be honest, if no one plays my game, I will still make it, because I really like the experience... but, to be completely honest I want people to play it, because I want to contribute something.
+Statistically speaking, there is a pretty good chance that almost noone will play my game. Just last year (2020) there where more thatn 10000 games released &lt;a href=&quot;https:&#x2F;&#x2F;www.statista.com&#x2F;statistics&#x2F;552623&#x2F;number-games-released-steam&#x2F;&quot;&gt;just on Steam&lt;&#x2F;a&gt;. My game will be a drop in an ocean, or a (hopefully) shiny penny in a swimmingpool of pennies.&lt;&#x2F;p&gt;
+&lt;p&gt;So I thought, what if I write some more about my findings, I can share with the world that way. Maybe I won&#x27;t make the best game in the world (I will still try), but maybe I can help others make the best game.&lt;&#x2F;p&gt;
+&lt;p&gt;Also, I think I might start making small videos (2 minutes or so) about my findings, if nothing else to try it. Besides that I will try to make a blogpost about my findings each week. &lt;&#x2F;p&gt;
+&lt;h2 id=&quot;what-is-fun&quot;&gt;What is fun?&lt;&#x2F;h2&gt;
+&lt;p&gt;Currently the enemys only goal is to reach a goal area, and you have to &amp;quot;keep it away&amp;quot;.
+This is actually surprisingly fun, you have to think of &amp;quot;oh if I push this enemy over here, he will push the other enemy into this area and so on and so on&amp;quot;.
+I think this game could become really fun.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;what-is-not-fun&quot;&gt;What is not fun?&lt;&#x2F;h2&gt;
+&lt;p&gt;Oh, there is so much that is not fun about this game right now :-)&lt;&#x2F;p&gt;
+&lt;p&gt;Today my plan is to try and write it all down and use the whole next week on just experimenting with solutions.&lt;&#x2F;p&gt;
+&lt;p&gt;The game board is currenly totally random, meaning that you can end up with a game where the enemy starts on the goal, and you have just lost. To fix this I think i need to work with a &amp;quot;template&amp;quot; map generation, kind of like what spelunky does, as explained in this video:&lt;&#x2F;p&gt;
+&lt;div &gt;
+    &lt;iframe
+        src=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;embed&#x2F;Uqk5Zf0tw3o&quot;
+        webkitallowfullscreen
+        mozallowfullscreen
+        allowfullscreen&gt;
+    &lt;&#x2F;iframe&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;The game only has one goal &amp;quot;stop the enemy&amp;quot; i think i should experiment with more interesting goals aswell.&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Using tests to speed up your feedback loop</title>
+		<published>2021-03-19T00:00:00+00:00</published>
+		<updated>2021-03-19T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/blog/tdd-gamedev-feedback-loop/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/blog/tdd-gamedev-feedback-loop/</id>
+		<content type="html">&lt;h2 id=&quot;tl-dr&quot;&gt;TL;DR&lt;&#x2F;h2&gt;
+&lt;p&gt;In my experience, you can speed up your workflow in UI and Game development, by writing tests for the edge&#x2F;hard-to-reproduce cases.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;tdd&quot;&gt;TDD&lt;&#x2F;h2&gt;
+&lt;p&gt;Honestly, I make mistakes all the time, it is part of being human, and when you deal with big interconnected systems it becomes impossible to keep track of everything.
+That is why I like being told that I made a mistake as soon as I can. I think that is why I Rust. Rusts speed is great, but even if it wasn&#x27;t speedy I would use it, because it prevents me from making so many mistakes at compile time. Rust fits my temperment.
+There are still mistakes that a compiler can not find for you; for those cases automated tests help.
+I like to do Test Driven Development (TDD)! I like to write tests whenever I can, and if I can do them before I do implementation that is even better. You don&#x27;t have to like tests, but in this post I will show how I use tests not to &amp;quot;slow me down&amp;quot; but to speed up my development flow and feedback loop.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;backend-vs-ui-testing&quot;&gt;Backend vs Ui testing&lt;&#x2F;h2&gt;
+&lt;p&gt;I have a background in &amp;quot;full stack&amp;quot; development, meaning some backend and more frontend. For me it has always been easier to write tests for the backend, a simplified flow for backend code is:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Set up a state&lt;&#x2F;li&gt;
+&lt;li&gt;Call a function that performs some state change&lt;&#x2F;li&gt;
+&lt;li&gt;Check the state&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;For UI it is harder, you are always working with a user and a browser, how do you mock that? The &amp;quot;state change flow&amp;quot; becomes complicated by DOM Changes, Rendering and so on. There are many different workarounds, but the problem is always that you have a tight integration the browser which you do not want to test.
+Besides that, how much do you test the UI? Should you test that a button is the right shade of green? Maybe&#x2F;Probably not. Should you verify that the UI sends a request to the server when a button is sent? Probably, but what about that transition from left to right? Or that things are alligned to the left?
+Most times it is easier to look at the webpage and &amp;quot;see&amp;quot; that something is off.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;gamedev&quot;&gt;Gamedev&lt;&#x2F;h2&gt;
+&lt;p&gt;I am currently working on a game build from (almost) scratch (See my weekly devlopment blog &lt;a href=&quot;https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;robotcards&#x2F;&quot;&gt;here&lt;&#x2F;a&gt;), and I am trying to taking my finding from the gamedev world with me into my other other development.
+As far as I can tell, TDD is not that wide spread in game development, maybe on online servers, but not that much in the actual game clients.
+I got to thinking why this is? I think that it is because, like in UI development, a lot of what makes a game is what makes it &amp;quot;feel good&amp;quot; and that is not something that is easy to describe and test for.&lt;&#x2F;p&gt;
+&lt;p&gt;When I started making my own game, I (without thinking about it) started coding without doing any tests. My top priority was to &amp;quot;get going&amp;quot; and then &amp;quot;iterate on the gameplay&amp;quot;, I guess I thought &amp;quot;tests will slow me down&amp;quot;.
+Things where going great, even without tests, a lot of it was just some simple code.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;testing-with-a-ecs&quot;&gt;Testing with a ECS&lt;&#x2F;h2&gt;
+&lt;p&gt;After a week of development, I wanted to implement a feature in my game, where a robot can damage another robot if it &amp;quot;squishes&amp;quot; it. A tobot gets squisnhed, if it is being pushed by another robot, but is then prevented from moving (because it hits a blocker, like a wall). The complicated part of this is that this can chain, so a robot can push a robot that pushes another and so on and so on.
+This was a bit tricky, because setting up this chain of events takes time in the game and if there is a bug have to play to that point of the game again.
+I thought to myself &amp;quot;what would I normally do here if it was not a game?&amp;quot;, I would make a testcase first, make a simple solution to that test, refactor a bit, and then repeat, until I had covered all the cases I could think of (also know as Red, Green, Refactor).&lt;&#x2F;p&gt;
+&lt;p&gt;I use an Entity Component System for my game (there are many great explanations of how they work out there, so give it a google). I started seperated out my logic from the system that would perform the &amp;quot;sqish&amp;quot;, then I realized, but do I really have to do this seperation?&lt;&#x2F;p&gt;
+&lt;p&gt;For this project I am using the ECS library &amp;quot;Legion&amp;quot;, where each system is actually just a function, that takes some input:`&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code class=&quot;language-Rust&quot; data-lang=&quot;Rust&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;play_actions&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;(
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;world&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;: &amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; SubWorld,
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;command_buffer&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;: &amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; CommandBuffer,
+    #[resource] &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;play_state&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;: &amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; PlayStateResource,
+    #[resource] &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;grid&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;: &amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; GridResource,
+) {
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The system works on a game world. So I realized that i could tests the whole system, if I could give it a game world, I could run the system and check if it did what I wanted afterwords. The flow became:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Set up a world&lt;&#x2F;li&gt;
+&lt;li&gt;Call a function that performs some world change&lt;&#x2F;li&gt;
+&lt;li&gt;Check the world&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Replace the word &amp;quot;World&amp;quot; with &amp;quot;State&amp;quot; and you have a test flow that looks a lot like the simple-to-test backend test flow.&lt;&#x2F;p&gt;
+&lt;p&gt;In legion this is possible, but you will have to use a bit of unsafe code, but honestly, I don&#x27;t think that is a problem since it is just for testing.&lt;&#x2F;p&gt;
+&lt;p&gt;First you can make a test module direcly next to the system definition, because of the cfg this code is only included in the test build, and not in the actual game.&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code class=&quot;language-Rust&quot; data-lang=&quot;Rust&quot;&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;#[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;cfg&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;(test)]
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mod &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;tests {
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;use super&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;::CardinalDirection;
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;use crate&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;::resources::GridContent;
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;use crate&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;::resources::*;
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;use &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;legion::{world::ComponentAccess, Resources, World};
+
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;use super&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;::*;
+
+    #[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;test&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;]
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;play_squish&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;() {...}
+
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Inside the test we can then setup exactly the scenario we want to test for:&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code class=&quot;language-Rust&quot; data-lang=&quot;Rust&quot;&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Arrange
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let mut&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; world = World::default();
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let mut&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; resources = Resources::default();
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let mut&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; grid = GridResource::new_test();
+
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; squish_unit = command_buffer.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;push&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;((Health::new(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;), &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;));
+    ...
+    command_buffer.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;flush&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;(&amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; world, &amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; resources);
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let mut&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; subworld = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;unsafe &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;{ SubWorld::new_unchecked(&amp;amp;world, ComponentAccess::All, None) };
+
+    ...
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F;&#x2F; Act
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;play_actions&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;(
+        &amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; subworld,
+        &amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; command_buffer,
+        &amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; play_state,
+        &amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; grid,
+    );
+    command_buffer.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;flush&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;(&amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; world, &amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; resources);
+
+    ...
+
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Assert
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;assert_eq!(
+        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;,
+        world
+            .&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;entry&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;(hit_unit)
+            .&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;unwrap&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;()
+            .get_component::&amp;lt;Health&amp;gt;()
+            .&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;unwrap&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;()
+            .current_health
+    );
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;I have comittet some of the details here (marked with ...) to keep it it easy to read.
+When I run &lt;code&gt;cargo test&lt;&#x2F;code&gt; this runs in a second or two, and i instantly know if my code work.&lt;&#x2F;p&gt;
+&lt;p&gt;I am sure you can do something simelar, without using ECS, but it sure is easy to do when you have one.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;improving-your-feedback-loop&quot;&gt;Improving your feedback loop&lt;&#x2F;h2&gt;
+&lt;p&gt;The point is: we can use tests for more than verifying correctness, we can use test for fast feedback loops.&lt;&#x2F;p&gt;
+&lt;p&gt;By using tests for those hard-to-reprocuce&#x2F;edge cases, you don&#x27;t have to play to certain a spot in my game, or make a save game that I can load up and verify behavior in. Just run the tests, because the they set up the a world state that would will the behaviour to verify.
+In general, remember; The magic is not only in the Act or the Assert, it is also in the Arrange.&lt;&#x2F;p&gt;
+&lt;p&gt;There are things that are just better to test by running the game, and you can never unit test if a game is fun, or if a &amp;quot;transition from a to be looks right&amp;quot;, but you can verify those edge cases, and you can improve your feedback loop.
+If you have to choose, focus on testing the edge cases, instead of the &amp;quot;main flow&amp;quot;.
+You will quickly realize if something is wrong with the main flow, if nothing happens when you click a button or if an enemy does not take damage.
+Finding that the whole page crashes if a server gives an &amp;quot;backoff&amp;quot; or that the third unit that gets &amp;quot;squished&amp;quot; does not take damage, that is where tests can help, in both UI and Gamedev.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;bringing-it-back&quot;&gt;Bringing it back&lt;&#x2F;h2&gt;
+&lt;p&gt;This brings me back to what we can learn from gamedev about about frontend. Just like in a game, there are things that you just have to look at and get a feel for; don&#x27;t test those! Instead focus on testing those things that have hard to verify logic and scenarios that don&#x27;t happen often or are hard to set up.
+Not only because you verify correctness, but because you improve your developer feedback loop and save yourself a lot of time clicking around in a UI.
+Structuring your UI changes into the state -&amp;gt; action -&amp;gt; state flow helps a lot on testability for both ui and gamedev, but remember to use tests to optimize your workflow, not slow it down.&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Robotcards: Week 1</title>
+		<published>2021-03-14T00:00:00+00:00</published>
+		<updated>2021-03-14T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/robotcards/week1/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/robotcards/week1/</id>
+		<content type="html">&lt;h2 id=&quot;finishing-a-game&quot;&gt;Finishing a game&lt;&#x2F;h2&gt;
+&lt;p&gt;I am going to finish a game. I have always wanted to make a game, and I have started making many, but I have never really finish finished a game.
+So here is the goal. By &lt;em&gt;September 9th 2021&lt;&#x2F;em&gt;, I am going to release a game, of some size and some way (hoping for a Steam release, but let&#x27;s see).
+I made a bet with my wife that I could do it, so now I really have to do it!&lt;&#x2F;p&gt;
+&lt;p&gt;I have 26 weeks!&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;what-is-the-game&quot;&gt;What is the game&lt;&#x2F;h2&gt;
+&lt;p&gt;Right now the game is codenamed &amp;quot;Robot Cards&amp;quot;. Because that is what I know, it is about progamming robots, using cards. The gameplay is inspired by some of my favorite games like :&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Roborally (Boardgame)&lt;&#x2F;li&gt;
+&lt;li&gt;Into the Breach&lt;&#x2F;li&gt;
+&lt;li&gt;Hades&lt;&#x2F;li&gt;
+&lt;li&gt;Slay the spire&lt;&#x2F;li&gt;
+&lt;li&gt;Dominion (Boardgame)&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;The gameplay might change a lot as the weeks go on, but for now the core idea is that you:
+You control robots on a board&#x2F;grid.
+Each robot has a set of &amp;quot;registers&amp;quot; that can contain actions they can perform.
+You &amp;quot;program&amp;quot; the robots by playing cards on a register.
+After the planning the robots will perform the actions one by one.
+Robots can push and attack each other.&lt;&#x2F;p&gt;
+&lt;p&gt;The game is a rougelike, and deckbuilder, meaning that you get to change the cards you have available after each scenario. If you loose you start over and have to build a new deck (but you can unlock new cards options for your deck).&lt;&#x2F;p&gt;
+&lt;p&gt;Also &#x2F;&#x2F;TODO, i need to work on this elevator pitch.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-process&quot;&gt;The process&lt;&#x2F;h2&gt;
+&lt;p&gt;The plan is to make a weekly update on what has been made since last week, and to talk about what I will make for the next week.
+To anyone reading this (including future me), congratulations you are my accountability partner.&lt;&#x2F;p&gt;
+&lt;p&gt;I might make video updates aswell, once I have something that is actually worth showing on video :-)&lt;&#x2F;p&gt;
+&lt;p&gt;Each week i will make one of theese post, then plan the next week (I am using Trello for planning). If I during the day get a good idea i add it to a &amp;quot;scratchpad&amp;quot; list in Trello and each week I will then organize and revisit the items.&lt;&#x2F;p&gt;
+&lt;p&gt;I will try to do a &amp;quot;sprint planning&amp;quot; each week, to try and keep focus for the week. Also I am trying to keep track of time, since I only have 26 weeks.&lt;&#x2F;p&gt;
+&lt;p&gt;I have 3 kids and a dayjob, so I only have about an hour each day to work on this project, maybe if I am lucky a bit more on weekends. Lets say 10 hours a week, that leaves me with 260 hours to make this game.... that is not a lot for a game from scratch. SO I really have to keep focus.&lt;&#x2F;p&gt;
+&lt;p&gt;Each week I have to answer two questions:&lt;&#x2F;p&gt;
+&lt;p&gt;What is fun about this game? and what is not?&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;tech&quot;&gt;Tech&lt;&#x2F;h2&gt;
+&lt;p&gt;I will be making this game in Rust, using SDL2 for input and output and Legion ECS as an ECS library, but besides that the rest will be handmade. I am not using Unity or Unreal, because I want to learn how to do all the steps of the game development process.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;week-1&quot;&gt;Week 1&lt;&#x2F;h2&gt;
+&lt;p&gt;This first week, I have gotten started, I have a basic grid, units can move, they can be programmed, you have a deck of cards, a hand and a discard pile. There is currently only one goal for the enemy, and that is to get the goal area. I got A star implemented, so there is a &amp;quot;game&amp;quot;, as you can see from the screenshot, there is a long way to go.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;next-week&quot;&gt;Next Week&lt;&#x2F;h2&gt;
+&lt;p&gt;During play testing I found that the game was pretty hard, the way I have implemented the player registers, each card has a priorty, that is pretty hard to keep track of. Maybe i will just let each unit have a priority instead, or atleast make it clearer what is going to happen. Next week I will focus on getting the game easier to play, because it is needed to handle  randomness of the cards you are given. &lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Hobby Portfolio</title>
+		<published>2021-02-06T00:00:00+00:00</published>
+		<updated>2021-02-06T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/project/hobbyportfolio/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/project/hobbyportfolio/</id>
+		<content type="html">&lt;p&gt;Using a static site generator to make this webpage, uses &lt;a href=&quot;https:&#x2F;&#x2F;www.getzola.org&#x2F;&quot;&gt;Zola&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-hobby-project-graveyard&quot;&gt;The hobby project graveyard&lt;&#x2F;h2&gt;
+&lt;p&gt;I think that a lot of programmers have a long list of projects that they have started and never finihsed. I am no exception. But for every project I make I learn something, and I do make cool stuff, even if it is just for me. I realized that instead of &amp;quot;being ashames of not finishing things&amp;quot; I should be happy and proud that I keep learning new things. This page is a tribute to those &amp;quot;fallen heroes&#x2F;projects&amp;quot;. Hopefully readers can learn something from my mistakes, but even if they don&#x27;t I can atleast look back on my old projects with foundness and pride.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;static-site-generator&quot;&gt;Static Site Generator&lt;&#x2F;h2&gt;
+&lt;p&gt;To make this page I looked into a couple of different technologies. I knew that the page needed very little interaction, and mainly was just going to be &amp;quot;blog posts&amp;quot;. I had heard of static site generators and looked at what was available. Initially Gatsby looked interesting, but it was maybe a bit overkill, so I looked at alternatives. I heard about &lt;a href=&quot;https:&#x2F;&#x2F;www.getzola.org&#x2F;&quot;&gt;Zola&lt;&#x2F;a&gt; on a podcast and gave it a shot.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;zola&quot;&gt;Zola&lt;&#x2F;h2&gt;
+&lt;p&gt;It does a few things, but it does them very well, and very fast. All I needed was a way to generate html, in a reliable fashion, and Zola does that. Initally I also looked into the Theming, but realized that I need almost no CSS to get something that is good enough. The end result is that I can not generate this whole page in a couple of miliseconds locally to test. For deployment I set up github actions, and for hosting I set up a github page. All in all, completely free hosting and deployment in a couple of seconds.&lt;&#x2F;p&gt;
+&lt;p&gt;I am very happy with the result, if you have a small business page or blog I can recommend Zola!&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>BGG Fetch</title>
+		<published>2021-02-04T00:00:00+00:00</published>
+		<updated>2021-02-04T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/project/bggfetch/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/project/bggfetch/</id>
+		<content type="html">&lt;p&gt;A 20 lines program that will make a call to &lt;a href=&quot;https:&#x2F;&#x2F;boardgamegeek.com&#x2F;wiki&#x2F;page&#x2F;BGG_XML_API2&quot;&gt;Boardgame Geek API&lt;&#x2F;a&gt;, parse the output and print out all the urls pictures of boardgames in a users boardgame collections.
+This is used together with the cwget project and the imagemosaic program to make a mosaic wallpaper of images from a users boardgames.&lt;&#x2F;p&gt;
+&lt;p&gt;The biggest takeaway from this project was how little code you need to do this. If you know the right crates&#x2F;libraries to use, you can get a lot done by just stiching them together with a few lines of code.&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>CWget</title>
+		<published>2021-01-27T00:00:00+00:00</published>
+		<updated>2021-01-27T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/project/cwget/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/project/cwget/</id>
+		<content type="html">&lt;p&gt;A small cli program that takes a list of urls and downloads the content to a target folder (but only if they are not already downloaded).&lt;&#x2F;p&gt;
+&lt;p&gt;Using both Tokio and Rayon is maybe overkil, but it was fun to see how parralizable you could make downloading files, in the end this project was maybe an hour to make and it was fun to learn.&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Project Noah</title>
+		<published>2020-11-01T00:00:00+00:00</published>
+		<updated>2020-11-01T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/project/projectnoah/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/project/projectnoah/</id>
+		<content type="html">&lt;h2 id=&quot;under-construction&quot;&gt;Under construction&lt;&#x2F;h2&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Repeat Game</title>
+		<published>2020-11-01T00:00:00+00:00</published>
+		<updated>2020-11-01T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/project/repeatgame/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/project/repeatgame/</id>
+		<content type="html">&lt;p&gt;A turnbased time travel game.&lt;&#x2F;p&gt;
+&lt;p&gt;This is one of my games written in Rust, Legion and SDL 2. The game is a turn based unit control game (think chess) where you take turns making moves. The idea is that once you have played one unit, the board will reset and you can play the next, then the first unit will repeat what you just did. So in other words, you are orchestrating what each unit should do, one at a time. The kicker is that you might end up saving a unit that was originally destroyed, but removing the oponents peices first. &lt;&#x2F;p&gt;
+&lt;p&gt;The big problem with this game was that I needed an AI to play against, an AI that could &amp;quot;think in teese wierd ways&amp;quot;.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;monte-carlo-search-mcs&quot;&gt;Monte Carlo Search (MCS)&lt;&#x2F;h2&gt;
+&lt;p&gt;Initially I thought of hardcoding some behavoirs into the ai, but that did not turn out well. So i looked up how GO and Chess AIs could be implemented. I found Monte Carlo Tree Search. The idea is that you give the algorithm a set number of iterations it can do, and it then tries to find the next move to do that &amp;quot;seems the best at the time&amp;quot;. This is all explained in details in the following video:&lt;&#x2F;p&gt;
+&lt;div &gt;
+    &lt;iframe
+        src=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;embed&#x2F;UXW2yZndl7U&quot;
+        webkitallowfullscreen
+        mozallowfullscreen
+        allowfullscreen&gt;
+    &lt;&#x2F;iframe&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;Implementing MCS had one big problem, you need to iterate up and down in the tree, so each node needs to know its parent and each parent needs to know its children.
+This is not easy to do in Rust because of its borrow rules, to solve this problem I implemented a &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Zipper_(data_structure)&quot;&gt;Node Zipper&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;tick-tac-toe&quot;&gt;Tick Tac Toe&lt;&#x2F;h2&gt;
+&lt;p&gt;To test out the MCS I implemented a little tic tac toe game, and given enough iterations the AI never really looses.
+All in all a very fun project.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;will-come-back-to-it&quot;&gt;Will come back to it&lt;&#x2F;h2&gt;
+&lt;p&gt;This is one of the projects that I will come back to, I had the idea of Project Noah and I started that instead, but I will come back to this idea. There are a lot of things I know to do better with Legion and SDL 2 now.&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Sodukusolver</title>
+		<published>2020-09-10T00:00:00+00:00</published>
+		<updated>2020-09-10T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/project/sodukusolver/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/project/sodukusolver/</id>
+		<content type="html">&lt;p&gt;A small simple soduku solver written in Rust.&lt;&#x2F;p&gt;
+&lt;p&gt;I was thinking it would be fun to make a soduku solver that could give all the solutions to a soduku (in case there where more). There are lots of solutions out there, so I just found one in python and converted it to Rust. &lt;&#x2F;p&gt;
+&lt;p&gt;When I was done, I thought, how about I just give it a empty soduku plate and let it generate all the possible solution there are... i let it run for a couple of minutes and then i got a warning that my harddrive was just about out of space. Turns out there are a lot of possible sodukus (about 10^21) and Rust will gladly let you fill up your harddrive with a text file.&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Brain Frust</title>
+		<published>2020-08-06T00:00:00+00:00</published>
+		<updated>2020-08-06T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/project/brainfrust/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/project/brainfrust/</id>
+		<content type="html">&lt;p&gt;A small interpeter and compiler for the &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Brainfuck&quot;&gt;Brainfuck&lt;&#x2F;a&gt; (BF) programming language written in Rust.&lt;&#x2F;p&gt;
+&lt;p&gt;During a hackathon at my job &lt;a href=&quot;http:&#x2F;&#x2F;broelstaerk.dk&#x2F;&quot;&gt;Brølstærk&lt;&#x2F;a&gt; we had a small challange to write a simple &amp;quot;Add two numbers&amp;quot; program in BF. After that I had the idea to test how good Rust is at writing langauge parsers and interpeters. 
+It turns out it was a lot simpler than I expected, so I also made it a compiler, a BF to Rust compiler. It turns out that if you compile a BF ot Rust in the most simple way you can, the programs are still pretty fast because Rust optimises so much.
+The project started just being a small CLI program, but I also ported it to WebAssembly (WASM). It was a great experience and fun to remember some of these techniques I had not really used since my UNI days.&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Priestest</title>
+		<published>2020-07-28T00:00:00+00:00</published>
+		<updated>2020-07-28T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/project/priestest/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/project/priestest/</id>
+		<content type="html">&lt;h2 id=&quot;under-construction&quot;&gt;Under construction&lt;&#x2F;h2&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Newton Game</title>
+		<published>2020-07-13T00:00:00+00:00</published>
+		<updated>2020-07-13T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/project/newton/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/project/newton/</id>
+		<content type="html">&lt;p&gt;This was my first game written in Rust, and the first game I have actually finished.
+You play as a spaceship that has to reach a goal before time runs out, without hitting other objects. The kicker is that there is only gravity near big objects, so you have to deal with not flying &amp;quot;too fast&amp;quot; and overshooting your target.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;a-game-in-rust&quot;&gt;A game in Rust&lt;&#x2F;h2&gt;
+&lt;p&gt;I hat watched this video:&lt;&#x2F;p&gt;
+&lt;div &gt;
+    &lt;iframe
+        src=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;embed&#x2F;aKLntZcp27M&quot;
+        webkitallowfullscreen
+        mozallowfullscreen
+        allowfullscreen&gt;
+    &lt;&#x2F;iframe&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;And the idea of ECS really inspired me, I also thought that a game was a good project for learning some more Rust.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;amethyst&quot;&gt;Amethyst&lt;&#x2F;h2&gt;
+&lt;p&gt;Amethyst is a game engine for Rust, and it seemed to be one of the more stable ones out there. The docs are nice and you can get started quickly. But i quickly faced the same problem I always face with Unity, I had to spend more time figuring out how to use the engine than actually programming the game itself. Also, Amethyst did at the time not support mobile targets, and I thought that if I had to learn an engine it should probably support phones.
+I decided to test the waters with Amethyst and then move on to something else later.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;finishing-a-game&quot;&gt;Finishing a game&lt;&#x2F;h2&gt;
+&lt;p&gt;I had set a goal for myself that I needed a playable games, including a titlescreen, gameplay, scoreboard, music and sound. In the end i got all those things to work, but I must admit that I underestimated how long it takes to get all the &amp;quot;not real gameplay&amp;quot; code done.&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Aseprite to RON</title>
+		<published>2020-06-16T00:00:00+00:00</published>
+		<updated>2020-06-16T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/project/asepritetoron/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/project/asepritetoron/</id>
+		<content type="html">&lt;p&gt;The first real usable program I made in Rust.&lt;&#x2F;p&gt;
+&lt;p&gt;While working on the game Newton I needed a way to quickly convert from an Aseprite export .json file to .ron notation file used by Amethyst game engine.
+When I look at the code as I write article (about 6 months later) it is kind of funny to see how far I have come in my understanding of Rust since then. I would definitely have done a lot of things differently now.&lt;&#x2F;p&gt;
+&lt;p&gt;This project showed me the value of the small self-contained executables that Rust creates. I didn&#x27;t need a million jars or DLLs, just one exe. This started my ideas about &amp;quot;micro executables&amp;quot; that I explain in the Book Mosaic project.&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>GPU Boids</title>
+		<published>2020-06-08T00:00:00+00:00</published>
+		<updated>2020-06-08T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/project/boids/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/project/boids/</id>
+		<content type="html">&lt;p&gt;A small simulation of fish in a fish tank.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;compute-shaders&quot;&gt;Compute Shaders&lt;&#x2F;h2&gt;
+&lt;p&gt;I have been playing with shaders on and off many times, I love to code something that is visual, and the GPU and its parallelism fascinates me. I wanted to play with compute shaders, because they are shaders that you can use to calculate with, not only for visual things.
+They are a little higher level than something like CUDA but low level enough you should be able to use it for most parallel processing.
+For this little experiment I used compute shaders to simulate a school of fish.&lt;&#x2F;p&gt;
+&lt;p&gt;It was fun to experiment with when it made sense to use the GPU and when to use the CPU.
+For the fish, GPU, it was a very parallel problem.
+For the sharks, that hunts the fish, CPU, are one or two of the sharks at any time, even if the sharks need to consider every fish the overhead of sending the data to the GPU was just too high.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;just-watch-sebastian&quot;&gt;Just watch Sebastian&lt;&#x2F;h2&gt;
+&lt;p&gt;If you want to watch a really great video about Boids you should watch this:&lt;&#x2F;p&gt;
+&lt;div &gt;
+    &lt;iframe
+        src=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;embed&#x2F;bqtqltqcQhw&quot;
+        webkitallowfullscreen
+        mozallowfullscreen
+        allowfullscreen&gt;
+    &lt;&#x2F;iframe&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;His video goes into great details.&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Book Mosaic</title>
+		<published>2020-06-08T00:00:00+00:00</published>
+		<updated>2020-06-08T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/project/bookmosaic/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/project/bookmosaic/</id>
+		<content type="html">&lt;p&gt;Generates a &amp;quot;mosaic&amp;quot; of a collection of images.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;3-iterations&quot;&gt;3 Iterations&lt;&#x2F;h2&gt;
+&lt;p&gt;This is one of those projects that have been through quite some iterations, I have reimplemented this at least 3 times. So if the listed &amp;quot;tags&amp;quot; at for this project looks a little weird, it is because it is actually 3 projects, at 3 different times, all doing about the same.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;why-make-this&quot;&gt;Why make this?&lt;&#x2F;h2&gt;
+&lt;p&gt;I like to read books, I exclusively read digital books on my Kindle. I try to read a book a week, but that is not always possible, so maybe about 40 books a year. One thing that I realize that I miss is having a book shelf, a place to display my books. I don&#x27;t want the shelf to show off (look how well read I am) but more to keep the books as memorabilia. Something you walk by, and then, out of the corner of your eye, you glimpse the cover of a great book and then instantly remember all of those great moments from the book.&lt;&#x2F;p&gt;
+&lt;p&gt;So the idea was &amp;quot;how about I make a mosaic of all the covers of all the books I have read and put that as the lock screen on my computer&amp;quot;
+Also the image should update every time I have finished reading a book (which I track on GoodReads).&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-algorithm&quot;&gt;The Algorithm&lt;&#x2F;h2&gt;
+&lt;p&gt;The Algorithm for this mosaic goes something like this:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Find out the resolution of the target image&lt;&#x2F;li&gt;
+&lt;li&gt;Decide on a number of columns you want (iteration 1 this was manual, in 2 and 3 it is automatic)&lt;&#x2F;li&gt;
+&lt;li&gt;Resize all images to the with of the column (keeping the aspect ratio)&lt;&#x2F;li&gt;
+&lt;li&gt;Go through each image and add it to the &amp;quot;lowest column&amp;quot;, updating the height of the column&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;This will make an image that looks something like this:
+&lt;img src=&quot;https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;PhilipK&#x2F;hobbyportfolio&#x2F;main&#x2F;static&#x2F;images&#x2F;mosaic.png&quot; alt=&quot;Mosaic Image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;The trick here is to find the best number of columns, each iteration had a separate way of handling this.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;iteration-1-c-typescript-canvas&quot;&gt;Iteration 1 - C#, Typescript &amp;amp; Canvas&lt;&#x2F;h2&gt;
+&lt;p&gt;The first iteration of this was done in a simple typescript webpage. Canvas was used to draw the images. Integration with Goodreads was done through the Goodreads API and some C# code.
+The interface was an input field for your Goodreads id, a number input for the number of columns you wanted and a subtmit button to go.&lt;&#x2F;p&gt;
+&lt;p&gt;The solution worked.... kind of, I ran into this weird problem with Canvas.
+If you are using images from a different origin (a different DNS domain) the canvas will be concidered &amp;quot;unsafe&amp;quot; and you can now not easily download the canvas as an image.
+It is possible to get around this with a &amp;quot;no cors proxy&amp;quot; but that just made the whole solution very unreliable. 
+Another problem was that the solution was slow, and the whole browser would freeze up for a while when making the image.
+But, it worked well enough for awhile.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;iteration-2-docker-dotnet-core&quot;&gt;Iteration 2 - Docker &amp;amp; DotNet Core&lt;&#x2F;h2&gt;
+&lt;p&gt;Later I was learning about docker containers, and thought of a rewrite of this project into c# with a library for the image. The plan was to run a docker container on my local machine that would check for new book images, store the images locally and then generate the new mosaic and store it on disk.
+I got it working no problem, the c# version was much faster than the javascript one, and getting a dotnet core application running in a container was super simple.
+Since this solution was faster and running in the background, i could make a best guess at how many columns where needed, but simply trying columns = n &#x2F; 2 (where n is the number of pictures) and then iterating backwords (n--) until i had an image where all columns where not full, when i would make the final image with n+1. This worked pretty well, it was ofc slower than just typing the columns myself.&lt;&#x2F;p&gt;
+&lt;p&gt;But there where still problems.
+I could not really automately set the lockscreen (i couldn&#x27;t do that in the first solution either), running a whole Hyper VM for just one docker image.
+I ended up turning off the container, and just running the program and setting the lockscreen manullly every time i finished a book.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;iteration-3-rust-rayon&quot;&gt;Iteration 3 - Rust &amp;amp; Rayon&lt;&#x2F;h2&gt;
+&lt;p&gt;Enter Rust, 2020 (or the later half of 2020 and 2021 so far) has been the year of Rust for me. I wanted to learn about about image proccessing and multi threading in rust.
+The new implementation was surprisingly simple compared to both the C# and Javascript version, that might be because it was the 3rd time i was implementing this.
+The solution was about 5x faster than the C# version, but the kicker was that now, instead of calculating the number of columns one at a time i could parralize that with Rayon. Instead i could now look at how many wasted pixel i had (pixels from the books not in the final mosaic or pixels not fill out in the final mosaic).
+For this solution is just made a CLI, added it to Windows path, and used a little powershell script to run the cli, and then set the windows lockscreen. I triggered the powershell script to run every time i log into the machine.
+In the end this solution is the first one that could automate it all... without even spinning up hyper-v vm for docker :-)&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Sidereal Confluence App</title>
+		<published>2019-12-10T00:00:00+00:00</published>
+		<updated>2019-12-10T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/project/siderealconfluenceapp/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/project/siderealconfluenceapp/</id>
+		<content type="html">&lt;p&gt;Sidereal Confluence board game helper app, written in Angular.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;keeping-up-with-the-angular&quot;&gt;Keeping up with the Angular&lt;&#x2F;h2&gt;
+&lt;p&gt;Back when Angular first came out I tried using it, and it was fine, but then I found React and it just spoke to me a lot more.
+But I know that it Angular is very popular and very used, so it can be good to revisit something you initially dismissed.
+I wanted to make a small helper app for the boardgame Sidereal Confluence, there is a bit of setup in that game, and you have to keep track of the round number and you need a timer, I thought it was a small enough app to test out the state of Angular.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;observables-are-interesting&quot;&gt;Observables are interesting&lt;&#x2F;h2&gt;
+&lt;p&gt;One thing that I think I like is the concept of Observabe, just subscribe and you will get new data. This is a lot of what happens in the web world, we render data. When that data changes we need to render again. What I don&#x27;t know is how hard this is to track, I have a feeling this could end up leading to a  &amp;quot;why did it change now?&amp;quot;  or a &amp;quot;why didn&#x27;t it update&amp;quot;
+moment.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;i-still-prefer-other-frameworks&quot;&gt;I still prefer other frameworks&lt;&#x2F;h2&gt;
+&lt;p&gt;Look, Angular is fine, if I am forced to use it I will gladly do that, it is the worst of the best for me, that doesn&#x27;t make it bad. But for me, I will still try to use something else.
+Angular still is opinionated about a lot of things, and has a lot of things out of the box, I just still feel like i spend most of the time debuggin why my angular code does not work, rather than writing the code. &lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Cardboard Butler V2</title>
+		<published>2019-08-31T00:00:00+00:00</published>
+		<updated>2019-08-31T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/project/cardboardbutlerv2/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/project/cardboardbutlerv2/</id>
+		<content type="html">&lt;p&gt;The second (and current) iteration of Cardboard Butler; A webpage to find the board game to play with your friends.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;why-do-a-version-2&quot;&gt;Why do a version 2?&lt;&#x2F;h2&gt;
+&lt;p&gt;There where multiple reasons that I wanted to re-implement Cardboard Butler;&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;After having used many different versions of Redux for React i wanted to see if I really needed a strict framework for a simple site like this&lt;&#x2F;li&gt;
+&lt;li&gt;I wanted to try using Red-Green-Refactor Test Driven Development (TDD)&lt;&#x2F;li&gt;
+&lt;li&gt;I wanted to make a version that did not have use a proxy server for the BGG API&lt;&#x2F;li&gt;
+&lt;li&gt;I realized how deeply dependent on ImmutableJS the code was&lt;&#x2F;li&gt;
+&lt;li&gt;I wanted to set up CI&#x2F;CD so I didn&#x27;t have to manfully upload files&lt;&#x2F;li&gt;
+&lt;li&gt;I wanted to opensource the project&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;red-green-refactor-tdd&quot;&gt;Red Green Refactor TDD&lt;&#x2F;h2&gt;
+&lt;p&gt;I had just seen a talk by Martin Fowler, on Red Green Refactor TDD.&lt;&#x2F;p&gt;
+&lt;div &gt;
+    &lt;iframe
+        src=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;embed&#x2F;vqEg37e4Mkw&quot;
+        webkitallowfullscreen
+        mozallowfullscreen
+        allowfullscreen&gt;
+    &lt;&#x2F;iframe&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;I always try out new techniques and tools on a hobby project before I try to introduce them at work. I knew that Cardboard Butler could be a good project for this, since it would require some testing of async functions (fetching data) but also some &amp;quot;complex&amp;quot; behavior when sorting on multiple criteria.&lt;&#x2F;p&gt;
+&lt;p&gt;The experience of making a test, seeing it red and then go green was nothing new to me(still feels good). The big difference is that you KNOW that you are going to refactor it after it is green. It is allowed to do the first simple solution that comes to your mind to make it green, even if it is slow and ugly. Once you have made the simple solution you also know that you understand the problem, so your refactored solution is most likely going to be better than if you initially started making the &amp;quot;pretty&amp;quot; version.&lt;&#x2F;p&gt;
+&lt;p&gt;This has changed how I approach coding, even if I don&#x27;t get to do TDD, i still allow myself to do a ugly version first, just to verify that there is a solution, then I refactor it after. Before I would often spend a long time thinking of the &amp;quot;perfect solution&amp;quot; before i got coding, and then when I actually had done the implementation I realized that the problem was different than I expected.&lt;&#x2F;p&gt;
+&lt;p&gt;I 100% recommend trying out &amp;quot;Red Green Refactor TDD&amp;quot; on a project, even if you don&#x27;t think you are not sure that you will use it later. It teaches you something about how you code, more than just typing on the keyboard.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;services-instead-of-redux&quot;&gt;Services instead of Redux&lt;&#x2F;h2&gt;
+&lt;p&gt;Cardboard Butler is not a big, high interaction application, with many moving parts and possible states. It basically is just a &amp;quot;fetch, filter, sort, render&amp;quot; of an API. Inspired by &amp;quot;Services&amp;quot; from DotNet Core when using Dependency Injection, I tried to separate concerns into service classes instead of actions and reducers. The pros are that the services are very easy to unit test, also there is no overhead for other developers to understand, you can follow the flow of data by simply &amp;quot;going to implementation&amp;quot;. To handle changes i simply used Reacts internal state in a component.
+I really liked the simplicity of this solution.
+This just goes to show that there are no silver bullets, pick the right tool for the job, don&#x27;t do overkill.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;no-server-needed&quot;&gt;No server needed&lt;&#x2F;h2&gt;
+&lt;p&gt;BGG has an XML API, I wanted to get it into JSON instead.
+In the old version, I had made a server to proxy and cache the calls to BGG using GraphQL. While it was a good learning experience, it was also overkill, and the server was costing money to host.&lt;&#x2F;p&gt;
+&lt;p&gt;I found an NPM package that transforms XML into JSON &lt;a href=&quot;https:&#x2F;&#x2F;www.npmjs.com&#x2F;package&#x2F;xml-js&quot;&gt;xml-js&lt;&#x2F;a&gt;. The resulting JSON is not quite what you would expect from a normal JSON api (you can tell it used to be xml), but it does the job. I created typescript definitions that matched the output and hid the XML convertion in the service. It worked out great, and I would repeat this any time I have to work with an XML service from a frontend (or maybe even in a backend).&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;using-typescript-immutable-instead-of-a-library&quot;&gt;Using typescript immutable instead of a library&lt;&#x2F;h2&gt;
+&lt;p&gt;Immutable data structures are great! Specially when working with React and you combine it with Pure Components.
+&lt;a href=&quot;https:&#x2F;&#x2F;immutable-js.github.io&#x2F;immutable-js&#x2F;&quot;&gt;ImmutableJS&lt;&#x2F;a&gt; did its job for the first versions of Cardboard Butler, but, the problem was that I had coded the old version to be deeply dependent on it, even deep down in the render functions of the components. This made porting any component almost impossible. Typescript have gotten some great features for handling &lt;a href=&quot;https:&#x2F;&#x2F;medium.com&#x2F;jspoint&#x2F;typescript-data-immutability-71dc3e604426&quot;&gt;immutable data&lt;&#x2F;a&gt; that where not around when I first used ImmutableJS. I don&#x27;t think that I will use ImmutableJS again, I will just rely on typescript instead.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;ci-cd-in-azure&quot;&gt;CI&#x2F;CD in Azure&lt;&#x2F;h2&gt;
+&lt;p&gt;I found out that I could host cardboard butler on a simple static site in Azure and it would cost me a fraction of running the big server. So I set up a pipeline to just build and upload my project every time I pushed to the master branch. This process is pretty simple now, just take a look at Microsoft&#x27;s documentation &lt;a href=&quot;https:&#x2F;&#x2F;docs.microsoft.com&#x2F;en-us&#x2F;azure&#x2F;storage&#x2F;blobs&#x2F;storage-blob-static-website&quot;&gt;here&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;why-opensource&quot;&gt;Why opensource?&lt;&#x2F;h2&gt;
+&lt;p&gt;The original idea for Cardboard Butler came when another system similar system &amp;quot;shut down&amp;quot;. Suddenly I didn&#x27;t have a great tool for selecting which board games to play, so I wanted to make sure that even if something should happen to cardboard butler, others should be able to maintain it. Also I have used a lot of open-source software, it was time to give something back.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;end-result&quot;&gt;End result&lt;&#x2F;h2&gt;
+&lt;p&gt;In the end I think that the rewrite of Cardboard Butler was totally worth it. It has been a great learning experience... but... had this not been a hobby project, then the time spend on rewriting probably would not have been worth it. Yes the new version better in every way? Yes! But users most likely did not see that anything changed. That is a lot of hours spend on something that does the same thing, without any real new features. The old system worked fine, and the cost of that one server was not really a problem. But, this is not a big cooperate project, so I think it was worth it.&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Capsule</title>
+		<published>2019-01-20T00:00:00+00:00</published>
+		<updated>2019-01-20T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/project/capsule/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/project/capsule/</id>
+		<content type="html">&lt;p&gt;A small service for sharing content but only for a certain set of time.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;sas&quot;&gt;SAS&lt;&#x2F;h2&gt;
+&lt;p&gt;In Azure Blobstorage you can upload some data and then create a Shared Access Signatures (SAS) for the content. Think of an SAS as a token, that is only available for a limited set of time.
+The idea of Capsule is that you can upload content but also choose in which period of time it is accessible. This could be useful for stuff like: Giving digital presents, sharing exam assignments, or setting a time limit for how long content should be available (and be deleted after.).&lt;&#x2F;p&gt;
+&lt;p&gt;The system worked, and I made a small React UI interface for the solution. I guess that I didn&#x27;t do more with this Capsule because I didn&#x27;t really see it as something that would have a lot of &amp;quot;business potential&amp;quot;, so I just open sourced it for others to see instead.&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Boardgame NFC Plays</title>
+		<published>2017-12-07T00:00:00+00:00</published>
+		<updated>2017-12-07T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/project/bggnfcplays/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/project/bggnfcplays/</id>
+		<content type="html">&lt;p&gt;A small app that uses NFC to track which boardgames I play and for how long.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;purpose-of-the-app&quot;&gt;Purpose of the app&lt;&#x2F;h2&gt;
+&lt;p&gt;I got a bunch of nfc tags from a friend, and I wanted to try out how to work with them. Also I was playing a lot of boardgames, and I liked to keep track on how much time I played each of them. The idea was that if a game did not get played for a whole year I would have to concider if I should try to sell it.&lt;&#x2F;p&gt;
+&lt;p&gt;I thought, &amp;quot;what if I stick an NFC on the inside of each of my boardgames boxes&amp;quot;. Then I could put my phone on the game box to start a game timer, and put it on there again (or just push end on the screen) to stop a timer. The app could then push the &amp;quot;play information&amp;quot; to &lt;a href=&quot;https:&#x2F;&#x2F;boardgamegeek.com&#x2F;&quot;&gt;BGG&lt;&#x2F;a&gt;, the site I already used to track my games played.
+The year was 2017, and I am writing this in 2021, it now seems almost absurd that I got to play so many boardgames with friends that I needed an app to help me track the time, but back in 2017 I guess i did.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;kotlin&quot;&gt;Kotlin&lt;&#x2F;h2&gt;
+&lt;p&gt;I use Android Phones, and since I was making this just for myself as a Proof Of Concept and to learn about NFC tags, i decided to make it Android native. In 2016 Kotlin hit version 1.0, and it had started to replace Java as the recommended language for Android development.
+My first professional job was as a Java developer, I spent about 7 years writing Java, my first app (TaskXP) was in Java, but even after all that I could not be more excited to put Java behind and try Kotlin.&lt;&#x2F;p&gt;
+&lt;p&gt;Kotlin did not diasappoint, it instantly seemed familiar and it seemed very lean and clean (unlike the bloat in Java). I would say &amp;quot;If you are ever in situation where you need to do something with the JVM concider Kotlin instead of Java&amp;quot;.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;developing-for-android&quot;&gt;Developing for Android&lt;&#x2F;h2&gt;
+&lt;p&gt;The whole development process was very pleseant!
+The Android development experience has come a LONG way since I made TaskXP. Much better documentation, must easier to understand activies and intents, much better development tools (Android Studio) and it was very easy to get started with NFC tags, both reading and writing to them.&lt;&#x2F;p&gt;
+&lt;p&gt;To log the plays on BGG i had to do some login and cookie magic, but even this was easy thanks to the library &lt;a href=&quot;https:&#x2F;&#x2F;square.github.io&#x2F;okhttp&#x2F;&quot;&gt;OkHttp&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;end-result&quot;&gt;End result&lt;&#x2F;h2&gt;
+&lt;p&gt;The app worked, and I got it coded in less than a week of sparetime. You would log in with your BGG Credentials, then you would be shown a list of your games. If you click on a game and then hold your phone up to an NFC tag, the app would write the game id on the nfc tag.
+If you at any time (even if not in the app) hold up your phone to the NFC tag the app would launch and start a timer.
+In short, the app did exactly what it was supposed to!&lt;&#x2F;p&gt;
+&lt;p&gt;Do I still use this App? No, I simply don&#x27;t play enough boardgames that this is a problem for me anymore.
+Was it a great learning experience? Yes.
+What did I learn? Before this project I would always recommend people to do &amp;quot;cross platform apps&amp;quot;, because of how confusing Android development was. Now I learned that it has come a long way, and it might be worth it to do a native app anyways.&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>PDF Booklets</title>
+		<published>2017-08-08T00:00:00+00:00</published>
+		<updated>2017-08-08T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/project/pdfbooklet/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/project/pdfbooklet/</id>
+		<content type="html">&lt;p&gt;I once in a while like to play Tabletop RPGs, if you have ever tried any of them you know that the rulebooks for those games can easily be a couple hundred pages. I normally buy my books digitally, but there are some games that are just nice to have in physical copies. I thought about printing them, but the environmentalist in me could not justify printing 300 pages.&lt;&#x2F;p&gt;
+&lt;p&gt;I looked at how books are bound, if you look close you can see that books are a collection of small booklets bound together. About 8 pages, folded in the middle, and bound or sown together.
+Then each of these booklets are bound together.&lt;&#x2F;p&gt;
+&lt;p&gt;I made a small program that takes a pdf, and organizes the pages for printing in this fashion. A new pdf is made so that by printing on both sides of the paper, you can fit 4 pages onto on paper.&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Cardboard Butler V1</title>
+		<published>2017-02-16T00:00:00+00:00</published>
+		<updated>2017-02-16T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/project/cardboardbutlerv1/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/project/cardboardbutlerv1/</id>
+		<content type="html">&lt;p&gt;The first (and no decommisioned) version of Cardboard Butler.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;graphql&quot;&gt;GraphQL&lt;&#x2F;h2&gt;
+&lt;p&gt;I had just watched a couple of videos on GraphQL and I was itching to find something to use it for. I had tried to use the BGG API before, but had found it annoying to work with, mainly because it is XML, but also because information is spread out across multiple endpoints.
+I used NodeJS to set up a GraphQL server, that would wrap the BGG API. GraphQL was very quick to get started with, but then the problems started showing up:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;The BGG API has a build in backoff, meaning if you make too many requests you will be put on cooldown.&lt;&#x2F;li&gt;
+&lt;li&gt;There was no build in way to limit how deep or big requets users of your GraphQL API could make.&lt;&#x2F;li&gt;
+&lt;li&gt;Everything was in NodeJS and quickly turned into callback hell.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;caching&quot;&gt;Caching&lt;&#x2F;h2&gt;
+&lt;p&gt;To solve the problem of too many requets i set up file caching, storing every request for boardgame information in a seperate file.
+I also used GraphQL loaders, that would implement some in mememory caching for each request.
+This was almost enough to stop spamming BGG API (i love BGG so i would not want to spam them :-) ).&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;limiting-requets&quot;&gt;Limiting requets&lt;&#x2F;h2&gt;
+&lt;p&gt;To limit a request in Graph QL you have to change your &amp;quot;simple setup&amp;quot; quite a bit, using continuation tokens and all sorts of things. I never got around to doing this, but if I ever use GraphQL again, I wll definetly think about this earlier while i design the API.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;immutalbe-data&quot;&gt;Immutalbe Data&lt;&#x2F;h2&gt;
+&lt;p&gt;Immutable data i great to work with! After having used React for a while at this point, I realized the biggest challange was handling &amp;quot;how often and much React rerenders&amp;quot;. Enter ImmutableJS a javascript library implementing immutable datastructures, with a consistent easy to use library.
+At the time Typescript was not that supported by ImmutableJS, Typescript did not have build in help for immutable data either.
+While ImmutableJS was great to work with, I later realized how much I had depended on that one library, so much so that I could not reuse any of my React components without always including ImmutableJS.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;node-js-woes&quot;&gt;Node JS woes&lt;&#x2F;h2&gt;
+&lt;p&gt;Look, its nothing personal, I just think that Node JS and are not a good match. I really love languages and systems that are very strict and has lots of help up front. The worst things I know in development are: Runtime Execption (crashes) and Debugging wierd bugs. Most of this projects time was spent trying to figure out &amp;quot;why did it just crash?&amp;quot;.
+In retrospect I could have eliviated a lot of these problems with better unit testing, but honestly, I think that the language should help you more than that.&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Factory VR</title>
+		<published>2016-10-05T00:00:00+00:00</published>
+		<updated>2016-10-05T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/project/factoryvr/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/project/factoryvr/</id>
+		<content type="html">&lt;p&gt;A prototype for a Factory Builder VR game.&lt;&#x2F;p&gt;
+&lt;p&gt;In 2016 I had just got a HTC Vive, VR was here! Also I got Factorio, and I wanted to combine the two. 
+The idea was simple, build machines in 3d in vr, process resources with machines and put then into other machines.&lt;&#x2F;p&gt;
+&lt;p&gt;I think the reason I gave up on this project was Unity, any time I use unity i feel like I spend 30% of the time programming the game, and 70% looking up how to actually do something right in Unity. I had the first little prototype with conveyer belts, machines and resources working, but decided to shelf the game. Maybe I will come back to the idea now that I have an Oculus Quest 2.&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Elm Bgg</title>
+		<published>2016-02-27T00:00:00+00:00</published>
+		<updated>2016-02-27T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/project/elmbgg/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/project/elmbgg/</id>
+		<content type="html">&lt;p&gt;A simple rendering of your BGG games using ELM.&lt;&#x2F;p&gt;
+&lt;p&gt;ELM was a pretty interesting language. I am always drawn to strict languages, that in return promises safety and reliablitiy, and I can say that ELM delivers on those tings. Would I make a new project in ELM now? No, probably not, but I can say that it had changed the way that i think about programming, and it lead me to the next languages. I just made a couple of small projects with ELM, so i am not sure how it scales. The biggest downside to ELM at the time for me was that I realized that I probably could not convince anyone that it is a great language, it was just too functional and strict for most of my collegaues.&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Boardgame Card Generator</title>
+		<published>2016-01-21T00:00:00+00:00</published>
+		<updated>2016-01-21T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/project/cardgenerator/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/project/cardgenerator/</id>
+		<content type="html">&lt;p&gt;Based on your BGG collection generate some playingcards.&lt;&#x2F;p&gt;
+&lt;p&gt;This was basicly the analog predeceser to Cardboard Butler. The idea was that instaed of pulling down all your boardgames from your shelf, you would just pull out the deck of card, and each card would give a breif introduction to the game.
+I ended up actually making this work, with canvas, and a pdf generator in the browser. I got the cards printet, cut, and then when i tried it out with a group, they kind of just looked at me and said &amp;quot;i don&#x27;t know, can you just pick one?&amp;quot;.
+Lessons learned:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Comsumer overload is real.&lt;&#x2F;li&gt;
+&lt;li&gt;Test your ideas before you spend many hours pusing pixels around on a canvas just to realized that the idea is flawed.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Boardgame Voter</title>
+		<published>2015-11-08T00:00:00+00:00</published>
+		<updated>2015-11-08T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/project/boardgamevoter/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/project/boardgamevoter/</id>
+		<content type="html">&lt;p&gt;The idea is that you are sitting with your friends and you really can&#x27;t figure out what boardgame you to play, and you only have a certain time to play in. So you pull out the &amp;quot;boardgame voter app&amp;quot; and everyone votes on the boardgames they want to play. The app then tries to fit as many games that people really want to play into that timeframe.
+Also, if you had multiple game collections peoples would know which games to bring to gamenight.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;knapsack&quot;&gt;Knapsack&lt;&#x2F;h2&gt;
+&lt;p&gt;The core of this app was the &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Knapsack_problem&quot;&gt;knapsack algorith&lt;&#x2F;a&gt;. The weight of a game is its estimated playtime length and its value is the number of vores from players.
+The algorithm tries to optimize &amp;quot;value for time&amp;quot;, without &amp;quot;breaking up a 2 hour boardgame into 20 mintues&amp;quot;.
+There are many great implementations out there for knapsack, but it was also fun to implement it myself.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;socket-io-websockets&quot;&gt;Socket IO &#x2F; Websockets&lt;&#x2F;h2&gt;
+&lt;p&gt;The process would be split into the following steps: create game room, select possible collections, vote for games, show results.
+All of this should be orchestrated with a server and multiple clients.
+The idea was to use Websockets to do all of this in &amp;quot;real time&amp;quot;.&lt;&#x2F;p&gt;
+&lt;p&gt;WebSockets where fun and easy to learn and to use, but it quickly became aparent that they where overkill for this little solution. The big difference is to think in Events instead of &amp;quot;request&#x2F;reply&amp;quot;. Also you have to think of the scaleability of a system whenever you introduce websockets. For this case each room would probably be less than 20 people, so no problem.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;maybe-just-talk-about-it-instead&quot;&gt;Maybe just talk about it instead&lt;&#x2F;h2&gt;
+&lt;p&gt;This project ended up dying as I realized that it is probably just easier to talk about what you want, and take it as it comes... not everyone is as crazy about picking the &amp;quot;perfect boardgame for the eavening&amp;quot;, so i realized that asking friends to go through a 4 step process and filling out a survey to pick a boardgame is maybe a bit much.&lt;&#x2F;p&gt;
+&lt;p&gt;In the end, it was a fun project to work on.&lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Task XP</title>
+		<published>2011-09-16T00:00:00+00:00</published>
+		<updated>2011-09-16T00:00:00+00:00</updated>
+		<link href="https://philipk.github.io/devblog/project/taskxp/" type="text/html"/>
+		<id>https://philipk.github.io/devblog/project/taskxp/</id>
+		<content type="html">&lt;p&gt;My first real Android App&lt;&#x2F;p&gt;
+</content>
+	</entry>
+</feed>

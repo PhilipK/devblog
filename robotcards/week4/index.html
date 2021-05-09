@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;style.css"  >
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;atom.xml">
+  
+  <title>PhilipK Devblog</title>
+</head>
+
+<body>
+  <section class="section">
+    <div class="container">
+      
+<h1 class="title">Robotcards: Week 4</h1>
+<p class="subtitle"><strong>2021-04-04</strong></p>
+
+ 
+
+<p><h2 id="progress-this-week">Progress this week</h2>
+<p>This week has been easter vacation, i expected that I would get a lot more done than normal. But instead I have spend time with family.</p>
+<p>I have finished about 21 points, which is a lot more than usual, so maybe i should expected that I can do 13 points in a week instead of 10.</p>
+<h2 id="sprite-batch">Sprite batch</h2>
+<p>One thing that I should have thought of doing a lot earlier is sprite batches as a component. Meaning a single entity can have a sprite batch that is a stack of sprites that will be rendered in order (first on bottom).
+As an example a card can cotain a background, a color and an icon, before I would make one entity pr sprite, now i can have a single entity (which also is how I think of a card, as one entity) but with multiple sprites.
+This too a bit of rewrite of the render.</p>
+<h2 id="premature-optimization">Premature optimization</h2>
+<p>When I had to redo a bit of the render I thought to myself, wow this code looks really unoptimized. What i do is I find every single sprite to render, then i add them to a list and then sort that list based on the sprites position and its &quot;z-index&quot;. This is to prevent a background sprite from overlapping a foreground sprite. I took a break and thought how I could improve it, and came up with all kinds of advanced ways of improving it, including a priority heap solution... but I thought, i better profile my game to see where it is slow.
+I used AMD uProf because that is what seemed to work on windows. The results where ... wierd... the most expensive function was something from the library, looks like it was what schedules all the different systems in the ECS. I doug into it for like an hour... then i thought, how much cpu is this game actually using?
+On my AMD Ryzen 3600 i takes up 0.1% CPU and 30mb ram, so I think that ANY optimization i would do to the renderer right now would be premature.
+I am constantly surpriced at how fast things can get in Rust or just in programming in general when you don't have to deal with IO.</p>
+<h2 id="team-select">Team select</h2>
+<p>This week I made a team selection screen. One of my favorite feature of the game Into The Breach is that you can pick 3 robots to make up your team for the run. It gives a lot of varirity and gives control in the randomness of a &quot;rouge-like&quot;. In slay the spire, you select a &quot;person&quot; to play as, but the biggest difference between the players are the cards that they can get.
+In my game my first idea was to also have 3 units that you control, but while designeing that select screen, I thought &quot;what if these players are not the direct units, but only control the starting cards and what kind of cards you get offered as rewards as the game goes on&quot;.</p>
+<p>The current design is that the team members are &quot;workers&quot; on the game run, so a programmer gets a lot of basic movement cards, since they can move the features around, while the artist gets cards that can create things and so on.</p>
+<h2 id="overworld">Overworld</h2>
+<p>I also made the overworl this week. The overworld lets you move from skirmish to skirmish, and shows you the next options you have for skirmishes.
+I will go more into detail on this once I have the core gameplay more narrowed down.</p>
+<h2 id="what-is-fun">What is fun?</h2>
+<p>I am excited for the deckbuilding and creating a starter deck for each run.</p>
+<h2 id="what-is-not-fun">What is not fun?</h2>
+<p>There are only 2 level types and the goals are still not clear, so I have to work on that.</p>
+<h2 id="next-week">Next week</h2>
+<p>I think that the next week will focus on:</p>
+<ol>
+<li>Abilities</li>
+<li>Picking rewards / Deck Building</li>
+<li>Levels and Goals</li>
+</ol>
+<p>While i am doing that I will work on sprites and card art.</p>
+</p>
+
+<div>
+  <h3>Tags</h3>
+  <ul class="tags">
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;rust&#x2F;">Rust</a></li>
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;legion&#x2F;">Legion</a></li>
+    
+  </ul>
+</div>
+
+
+    </div>
+  </section>
+</body>
+
+</html>

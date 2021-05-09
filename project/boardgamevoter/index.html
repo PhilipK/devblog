@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;style.css"  >
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;atom.xml">
+  
+  <title>PhilipK Devblog</title>
+</head>
+
+<body>
+  <section class="section">
+    <div class="container">
+      
+<h1 class="title">Boardgame Voter</h1>
+<p class="subtitle"><strong>2015-11-08</strong></p>
+
+
+<a href="https://bitbucket.org/PhilipK/boardgamevoter">Code</a>
+ 
+
+<p><p>The idea is that you are sitting with your friends and you really can't figure out what boardgame you to play, and you only have a certain time to play in. So you pull out the &quot;boardgame voter app&quot; and everyone votes on the boardgames they want to play. The app then tries to fit as many games that people really want to play into that timeframe.
+Also, if you had multiple game collections peoples would know which games to bring to gamenight.</p>
+<h2 id="knapsack">Knapsack</h2>
+<p>The core of this app was the <a href="https://en.wikipedia.org/wiki/Knapsack_problem">knapsack algorith</a>. The weight of a game is its estimated playtime length and its value is the number of vores from players.
+The algorithm tries to optimize &quot;value for time&quot;, without &quot;breaking up a 2 hour boardgame into 20 mintues&quot;.
+There are many great implementations out there for knapsack, but it was also fun to implement it myself.</p>
+<h2 id="socket-io-websockets">Socket IO / Websockets</h2>
+<p>The process would be split into the following steps: create game room, select possible collections, vote for games, show results.
+All of this should be orchestrated with a server and multiple clients.
+The idea was to use Websockets to do all of this in &quot;real time&quot;.</p>
+<p>WebSockets where fun and easy to learn and to use, but it quickly became aparent that they where overkill for this little solution. The big difference is to think in Events instead of &quot;request/reply&quot;. Also you have to think of the scaleability of a system whenever you introduce websockets. For this case each room would probably be less than 20 people, so no problem.</p>
+<h2 id="maybe-just-talk-about-it-instead">Maybe just talk about it instead</h2>
+<p>This project ended up dying as I realized that it is probably just easier to talk about what you want, and take it as it comes... not everyone is as crazy about picking the &quot;perfect boardgame for the eavening&quot;, so i realized that asking friends to go through a 4 step process and filling out a survey to pick a boardgame is maybe a bit much.</p>
+<p>In the end, it was a fun project to work on.</p>
+</p>
+
+<div>
+  <h3>Tags</h3>
+  <ul class="tags">
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;nodejs&#x2F;">NodeJs</a></li>
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;socket-io&#x2F;">Socket IO</a></li>
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;websockets&#x2F;">Websockets</a></li>
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;javascript&#x2F;">Javascript</a></li>
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;knapsack&#x2F;">Knapsack</a></li>
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;immutablejs&#x2F;">ImmutableJS</a></li>
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;redux&#x2F;">Redux</a></li>
+    
+  </ul>
+</div>
+
+
+    </div>
+  </section>
+</body>
+
+</html>

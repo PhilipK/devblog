@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;style.css"  >
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;atom.xml">
+  
+  <title>PhilipK Devblog</title>
+</head>
+
+<body>
+  <section class="section">
+    <div class="container">
+      
+<h1 class="title">Repeat Game</h1>
+<p class="subtitle"><strong>2020-11-01</strong></p>
+
+ 
+
+<p><p>A turnbased time travel game.</p>
+<p>This is one of my games written in Rust, Legion and SDL 2. The game is a turn based unit control game (think chess) where you take turns making moves. The idea is that once you have played one unit, the board will reset and you can play the next, then the first unit will repeat what you just did. So in other words, you are orchestrating what each unit should do, one at a time. The kicker is that you might end up saving a unit that was originally destroyed, but removing the oponents peices first. </p>
+<p>The big problem with this game was that I needed an AI to play against, an AI that could &quot;think in teese wierd ways&quot;.</p>
+<h2 id="monte-carlo-search-mcs">Monte Carlo Search (MCS)</h2>
+<p>Initially I thought of hardcoding some behavoirs into the ai, but that did not turn out well. So i looked up how GO and Chess AIs could be implemented. I found Monte Carlo Tree Search. The idea is that you give the algorithm a set number of iterations it can do, and it then tries to find the next move to do that &quot;seems the best at the time&quot;. This is all explained in details in the following video:</p>
+<div >
+    <iframe
+        src="https://www.youtube.com/embed/UXW2yZndl7U"
+        webkitallowfullscreen
+        mozallowfullscreen
+        allowfullscreen>
+    </iframe>
+</div>
+<p>Implementing MCS had one big problem, you need to iterate up and down in the tree, so each node needs to know its parent and each parent needs to know its children.
+This is not easy to do in Rust because of its borrow rules, to solve this problem I implemented a <a href="https://en.wikipedia.org/wiki/Zipper_(data_structure)">Node Zipper</a></p>
+<h2 id="tick-tac-toe">Tick Tac Toe</h2>
+<p>To test out the MCS I implemented a little tic tac toe game, and given enough iterations the AI never really looses.
+All in all a very fun project.</p>
+<h2 id="will-come-back-to-it">Will come back to it</h2>
+<p>This is one of the projects that I will come back to, I had the idea of Project Noah and I started that instead, but I will come back to this idea. There are a lot of things I know to do better with Legion and SDL 2 now.</p>
+</p>
+
+<div>
+  <h3>Tags</h3>
+  <ul class="tags">
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;rust&#x2F;">Rust</a></li>
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;monte-carlo-search&#x2F;">Monte Carlo Search</a></li>
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;legion&#x2F;">Legion</a></li>
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;sdl-2&#x2F;">SDL 2</a></li>
+    
+  </ul>
+</div>
+
+
+    </div>
+  </section>
+</body>
+
+</html>

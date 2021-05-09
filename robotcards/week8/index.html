@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;style.css"  >
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;atom.xml">
+  
+  <title>PhilipK Devblog</title>
+</head>
+
+<body>
+  <section class="section">
+    <div class="container">
+      
+<h1 class="title">Robotcards: Week 8</h1>
+<p class="subtitle"><strong>2021-05-02</strong></p>
+
+ 
+
+<p><h2 id="progress-this-week">Progress this week</h2>
+<p>This week I re-worked how fonts work, made some github actions, a few more cards and abilities and implemented picking a reward after a won battle.</p>
+<h2 id="font-textures">Font Textures</h2>
+<p>One thing that had been bugging me for a while was how fonts where handled. The SDL2 rust wrapper had some very &quot;hard to work with&quot; lifetimes that made it hard to keep a font loaded in memrory.
+The way I got around this before was to keep track of every text in the game world, and a map of every text that was generated into a texture.
+There where a few problems with this:</p>
+<h3 id="the-problem">The problem</h3>
+<p>Every time I needed a new font I would have to:</p>
+<ol>
+<li>serialize the font file to  disk (in a temp folder)</li>
+<li>load that file into memory through SDL2</li>
+<li>Generate the texture (with the given color) for that text</li>
+<li>Save the texture in a hashmap (key was text and font colour)</li>
+<li>THEN i could render the texture to the screen</li>
+</ol>
+<p>While it was not something that was an imediate problem, I was noticing that the memory use of the game would just rise as more and more different text was shown on screen.
+And I really didn't like that I had to touch the harddrive so often.</p>
+<h3 id="the-solution">The solution</h3>
+<p>I found this little tool online <a href="https://evanw.github.io/font-texture-generator/">https://evanw.github.io/font-texture-generator/</a>.
+It lets you generate a texturemap (and a json file that descripbes the position and size of each character) from a font.
+I rewrote the renderer (it is now much leaner) and made a new system that looks for anything with a TextSprite components. It then generates a sprite batch (a sprite for each character in the text) from the text and each of those sprites to the batch.</p>
+<div >
+<img  class="blogimage" src="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;processed_images&#x2F;6d8cc0f991ff9e1000.png"></img>
+</div>
+<p>This also means that I can remove the font from assets, and SDL2's font rendering feature.</p>
+<h3 id="the-result">The result</h3>
+<p>The end result is that I now can handle multiple fonts, the renderer is much simpler (it ONLY renders sprites to the screen),  the game uses a lot less memory and the binary is a lot smaller.</p>
+<div >
+<img  class="blogimage" src="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;processed_images&#x2F;f6a4695257b3cc7700.png"></img>
+</div>
+<div >
+<img  class="blogimage" src="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;processed_images&#x2F;a272706fbf098a2c00.png"></img>
+</div>
+<h2 id="github-actions">Github Actions</h2>
+<p>After hearing this talk:</p>
+<div >
+    <iframe
+        src="https://www.youtube.com/embed/t9HRzE7_2Xc"
+        webkitallowfullscreen
+        mozallowfullscreen
+        allowfullscreen>
+    </iframe>
+</div>
+<p>I looked into how I could start out early with a little devops for my game.
+I use github, so I looked into github acitons.
+I was very surpriced how easy it was to implement github actions.</p>
+<p>Initially I made an Action that would test my unit tests on linux, macos and windows... then I found out that one minute of build time on macos costs you 10 minutes of billable minutes.... So now I have a linux action that runs on push to main branch that runs tests. I also set up scheduled action that builds a windows release and generates a changelog every saturday.</p>
+<h2 id="what-is-fun">What is fun?</h2>
+<p>The game is still fun to play</p>
+<h2 id="what-is-not-fun">What is not fun?</h2>
+<p>Overworld still does not work and still too few levels.</p>
+<h2 id="next-week">Next week</h2>
+<p>Working more on getting the first playable Alpha</p>
+</p>
+
+<div>
+  <h3>Tags</h3>
+  <ul class="tags">
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;rust&#x2F;">Rust</a></li>
+    
+  </ul>
+</div>
+
+
+    </div>
+  </section>
+</body>
+
+</html>

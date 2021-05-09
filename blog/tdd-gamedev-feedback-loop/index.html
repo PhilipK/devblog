@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;style.css"  >
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;atom.xml">
+  
+  <title>PhilipK Devblog</title>
+</head>
+
+<body>
+  <section class="section">
+    <div class="container">
+      
+<h1 class="title">Using tests to speed up your feedback loop</h1>
+<p class="subtitle"><strong>2021-03-19</strong></p>
+
+ 
+
+<p><h2 id="tl-dr">TL;DR</h2>
+<p>In my experience, you can speed up your workflow in UI and Game development, by writing tests for the edge/hard-to-reproduce cases.</p>
+<h2 id="tdd">TDD</h2>
+<p>Honestly, I make mistakes all the time, it is part of being human, and when you deal with big interconnected systems it becomes impossible to keep track of everything.
+That is why I like being told that I made a mistake as soon as I can. I think that is why I Rust. Rusts speed is great, but even if it wasn't speedy I would use it, because it prevents me from making so many mistakes at compile time. Rust fits my temperment.
+There are still mistakes that a compiler can not find for you; for those cases automated tests help.
+I like to do Test Driven Development (TDD)! I like to write tests whenever I can, and if I can do them before I do implementation that is even better. You don't have to like tests, but in this post I will show how I use tests not to &quot;slow me down&quot; but to speed up my development flow and feedback loop.</p>
+<h2 id="backend-vs-ui-testing">Backend vs Ui testing</h2>
+<p>I have a background in &quot;full stack&quot; development, meaning some backend and more frontend. For me it has always been easier to write tests for the backend, a simplified flow for backend code is:</p>
+<ul>
+<li>Set up a state</li>
+<li>Call a function that performs some state change</li>
+<li>Check the state</li>
+</ul>
+<p>For UI it is harder, you are always working with a user and a browser, how do you mock that? The &quot;state change flow&quot; becomes complicated by DOM Changes, Rendering and so on. There are many different workarounds, but the problem is always that you have a tight integration the browser which you do not want to test.
+Besides that, how much do you test the UI? Should you test that a button is the right shade of green? Maybe/Probably not. Should you verify that the UI sends a request to the server when a button is sent? Probably, but what about that transition from left to right? Or that things are alligned to the left?
+Most times it is easier to look at the webpage and &quot;see&quot; that something is off.</p>
+<h2 id="gamedev">Gamedev</h2>
+<p>I am currently working on a game build from (almost) scratch (See my weekly devlopment blog <a href="https://philipk.github.io/devblog/robotcards/">here</a>), and I am trying to taking my finding from the gamedev world with me into my other other development.
+As far as I can tell, TDD is not that wide spread in game development, maybe on online servers, but not that much in the actual game clients.
+I got to thinking why this is? I think that it is because, like in UI development, a lot of what makes a game is what makes it &quot;feel good&quot; and that is not something that is easy to describe and test for.</p>
+<p>When I started making my own game, I (without thinking about it) started coding without doing any tests. My top priority was to &quot;get going&quot; and then &quot;iterate on the gameplay&quot;, I guess I thought &quot;tests will slow me down&quot;.
+Things where going great, even without tests, a lot of it was just some simple code.</p>
+<h2 id="testing-with-a-ecs">Testing with a ECS</h2>
+<p>After a week of development, I wanted to implement a feature in my game, where a robot can damage another robot if it &quot;squishes&quot; it. A tobot gets squisnhed, if it is being pushed by another robot, but is then prevented from moving (because it hits a blocker, like a wall). The complicated part of this is that this can chain, so a robot can push a robot that pushes another and so on and so on.
+This was a bit tricky, because setting up this chain of events takes time in the game and if there is a bug have to play to that point of the game again.
+I thought to myself &quot;what would I normally do here if it was not a game?&quot;, I would make a testcase first, make a simple solution to that test, refactor a bit, and then repeat, until I had covered all the cases I could think of (also know as Red, Green, Refactor).</p>
+<p>I use an Entity Component System for my game (there are many great explanations of how they work out there, so give it a google). I started seperated out my logic from the system that would perform the &quot;sqish&quot;, then I realized, but do I really have to do this seperation?</p>
+<p>For this project I am using the ECS library &quot;Legion&quot;, where each system is actually just a function, that takes some input:`</p>
+<pre style="background-color:#2b303b;">
+<code class="language-Rust" data-lang="Rust"><span style="color:#b48ead;">pub fn </span><span style="color:#8fa1b3;">play_actions</span><span style="color:#c0c5ce;">(
+    </span><span style="color:#bf616a;">world</span><span style="color:#c0c5ce;">: &amp;</span><span style="color:#b48ead;">mut</span><span style="color:#c0c5ce;"> SubWorld,
+    </span><span style="color:#bf616a;">command_buffer</span><span style="color:#c0c5ce;">: &amp;</span><span style="color:#b48ead;">mut</span><span style="color:#c0c5ce;"> CommandBuffer,
+    #[resource] </span><span style="color:#bf616a;">play_state</span><span style="color:#c0c5ce;">: &amp;</span><span style="color:#b48ead;">mut</span><span style="color:#c0c5ce;"> PlayStateResource,
+    #[resource] </span><span style="color:#bf616a;">grid</span><span style="color:#c0c5ce;">: &amp;</span><span style="color:#b48ead;">mut</span><span style="color:#c0c5ce;"> GridResource,
+) {
+</span></code></pre>
+<p>The system works on a game world. So I realized that i could tests the whole system, if I could give it a game world, I could run the system and check if it did what I wanted afterwords. The flow became:</p>
+<ul>
+<li>Set up a world</li>
+<li>Call a function that performs some world change</li>
+<li>Check the world</li>
+</ul>
+<p>Replace the word &quot;World&quot; with &quot;State&quot; and you have a test flow that looks a lot like the simple-to-test backend test flow.</p>
+<p>In legion this is possible, but you will have to use a bit of unsafe code, but honestly, I don't think that is a problem since it is just for testing.</p>
+<p>First you can make a test module direcly next to the system definition, because of the cfg this code is only included in the test build, and not in the actual game.</p>
+<pre style="background-color:#2b303b;">
+<code class="language-Rust" data-lang="Rust"><span style="color:#c0c5ce;">#[</span><span style="color:#bf616a;">cfg</span><span style="color:#c0c5ce;">(test)]
+</span><span style="color:#b48ead;">mod </span><span style="color:#c0c5ce;">tests {
+    </span><span style="color:#b48ead;">use super</span><span style="color:#c0c5ce;">::CardinalDirection;
+    </span><span style="color:#b48ead;">use crate</span><span style="color:#c0c5ce;">::resources::GridContent;
+    </span><span style="color:#b48ead;">use crate</span><span style="color:#c0c5ce;">::resources::*;
+    </span><span style="color:#b48ead;">use </span><span style="color:#c0c5ce;">legion::{world::ComponentAccess, Resources, World};
+
+    </span><span style="color:#b48ead;">use super</span><span style="color:#c0c5ce;">::*;
+
+    #[</span><span style="color:#bf616a;">test</span><span style="color:#c0c5ce;">]
+    </span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">play_squish</span><span style="color:#c0c5ce;">() {...}
+
+</span></code></pre>
+<p>Inside the test we can then setup exactly the scenario we want to test for:</p>
+<pre style="background-color:#2b303b;">
+<code class="language-Rust" data-lang="Rust"><span style="color:#c0c5ce;">   </span><span style="color:#65737e;">// Arrange
+    </span><span style="color:#b48ead;">let mut</span><span style="color:#c0c5ce;"> world = World::default();
+    </span><span style="color:#b48ead;">let mut</span><span style="color:#c0c5ce;"> resources = Resources::default();
+    </span><span style="color:#b48ead;">let mut</span><span style="color:#c0c5ce;"> grid = GridResource::new_test();
+
+    </span><span style="color:#b48ead;">let</span><span style="color:#c0c5ce;"> squish_unit = command_buffer.</span><span style="color:#96b5b4;">push</span><span style="color:#c0c5ce;">((Health::new(</span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">), </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">));
+    ...
+    command_buffer.</span><span style="color:#96b5b4;">flush</span><span style="color:#c0c5ce;">(&amp;</span><span style="color:#b48ead;">mut</span><span style="color:#c0c5ce;"> world, &amp;</span><span style="color:#b48ead;">mut</span><span style="color:#c0c5ce;"> resources);
+    </span><span style="color:#b48ead;">let mut</span><span style="color:#c0c5ce;"> subworld = </span><span style="color:#b48ead;">unsafe </span><span style="color:#c0c5ce;">{ SubWorld::new_unchecked(&amp;world, ComponentAccess::All, None) };
+
+    ...
+    </span><span style="color:#65737e;">/// Act
+    </span><span style="color:#96b5b4;">play_actions</span><span style="color:#c0c5ce;">(
+        &amp;</span><span style="color:#b48ead;">mut</span><span style="color:#c0c5ce;"> subworld,
+        &amp;</span><span style="color:#b48ead;">mut</span><span style="color:#c0c5ce;"> command_buffer,
+        &amp;</span><span style="color:#b48ead;">mut</span><span style="color:#c0c5ce;"> play_state,
+        &amp;</span><span style="color:#b48ead;">mut</span><span style="color:#c0c5ce;"> grid,
+    );
+    command_buffer.</span><span style="color:#96b5b4;">flush</span><span style="color:#c0c5ce;">(&amp;</span><span style="color:#b48ead;">mut</span><span style="color:#c0c5ce;"> world, &amp;</span><span style="color:#b48ead;">mut</span><span style="color:#c0c5ce;"> resources);
+
+    ...
+
+    </span><span style="color:#65737e;">// Assert
+    </span><span style="color:#c0c5ce;">assert_eq!(
+        </span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">,
+        world
+            .</span><span style="color:#96b5b4;">entry</span><span style="color:#c0c5ce;">(hit_unit)
+            .</span><span style="color:#96b5b4;">unwrap</span><span style="color:#c0c5ce;">()
+            .get_component::&lt;Health&gt;()
+            .</span><span style="color:#96b5b4;">unwrap</span><span style="color:#c0c5ce;">()
+            .current_health
+    );
+</span></code></pre>
+<p>I have comittet some of the details here (marked with ...) to keep it it easy to read.
+When I run <code>cargo test</code> this runs in a second or two, and i instantly know if my code work.</p>
+<p>I am sure you can do something simelar, without using ECS, but it sure is easy to do when you have one.</p>
+<h2 id="improving-your-feedback-loop">Improving your feedback loop</h2>
+<p>The point is: we can use tests for more than verifying correctness, we can use test for fast feedback loops.</p>
+<p>By using tests for those hard-to-reprocuce/edge cases, you don't have to play to certain a spot in my game, or make a save game that I can load up and verify behavior in. Just run the tests, because the they set up the a world state that would will the behaviour to verify.
+In general, remember; The magic is not only in the Act or the Assert, it is also in the Arrange.</p>
+<p>There are things that are just better to test by running the game, and you can never unit test if a game is fun, or if a &quot;transition from a to be looks right&quot;, but you can verify those edge cases, and you can improve your feedback loop.
+If you have to choose, focus on testing the edge cases, instead of the &quot;main flow&quot;.
+You will quickly realize if something is wrong with the main flow, if nothing happens when you click a button or if an enemy does not take damage.
+Finding that the whole page crashes if a server gives an &quot;backoff&quot; or that the third unit that gets &quot;squished&quot; does not take damage, that is where tests can help, in both UI and Gamedev.</p>
+<h2 id="bringing-it-back">Bringing it back</h2>
+<p>This brings me back to what we can learn from gamedev about about frontend. Just like in a game, there are things that you just have to look at and get a feel for; don't test those! Instead focus on testing those things that have hard to verify logic and scenarios that don't happen often or are hard to set up.
+Not only because you verify correctness, but because you improve your developer feedback loop and save yourself a lot of time clicking around in a UI.
+Structuring your UI changes into the state -&gt; action -&gt; state flow helps a lot on testability for both ui and gamedev, but remember to use tests to optimize your workflow, not slow it down.</p>
+</p>
+
+<div>
+  <h3>Tags</h3>
+  <ul class="tags">
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;rust&#x2F;">Rust</a></li>
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;legion&#x2F;">Legion</a></li>
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;ecs&#x2F;">ECS</a></li>
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;testing&#x2F;">Testing</a></li>
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;tdd&#x2F;">TDD</a></li>
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;red-green-refactor&#x2F;">Red, Green, Refactor</a></li>
+    
+  </ul>
+</div>
+
+
+    </div>
+  </section>
+</body>
+
+</html>

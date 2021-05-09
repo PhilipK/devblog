@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;style.css"  >
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;atom.xml">
+  
+  <title>PhilipK Devblog</title>
+</head>
+
+<body>
+  <section class="section">
+    <div class="container">
+      
+<h1 class="title">Boardgame NFC Plays</h1>
+<p class="subtitle"><strong>2017-12-07</strong></p>
+
+
+<a href="https://bitbucket.org/PhilipK/bggnfcplays">Code</a>
+ 
+
+<p><p>A small app that uses NFC to track which boardgames I play and for how long.</p>
+<h2 id="purpose-of-the-app">Purpose of the app</h2>
+<p>I got a bunch of nfc tags from a friend, and I wanted to try out how to work with them. Also I was playing a lot of boardgames, and I liked to keep track on how much time I played each of them. The idea was that if a game did not get played for a whole year I would have to concider if I should try to sell it.</p>
+<p>I thought, &quot;what if I stick an NFC on the inside of each of my boardgames boxes&quot;. Then I could put my phone on the game box to start a game timer, and put it on there again (or just push end on the screen) to stop a timer. The app could then push the &quot;play information&quot; to <a href="https://boardgamegeek.com/">BGG</a>, the site I already used to track my games played.
+The year was 2017, and I am writing this in 2021, it now seems almost absurd that I got to play so many boardgames with friends that I needed an app to help me track the time, but back in 2017 I guess i did.</p>
+<h2 id="kotlin">Kotlin</h2>
+<p>I use Android Phones, and since I was making this just for myself as a Proof Of Concept and to learn about NFC tags, i decided to make it Android native. In 2016 Kotlin hit version 1.0, and it had started to replace Java as the recommended language for Android development.
+My first professional job was as a Java developer, I spent about 7 years writing Java, my first app (TaskXP) was in Java, but even after all that I could not be more excited to put Java behind and try Kotlin.</p>
+<p>Kotlin did not diasappoint, it instantly seemed familiar and it seemed very lean and clean (unlike the bloat in Java). I would say &quot;If you are ever in situation where you need to do something with the JVM concider Kotlin instead of Java&quot;.</p>
+<h2 id="developing-for-android">Developing for Android</h2>
+<p>The whole development process was very pleseant!
+The Android development experience has come a LONG way since I made TaskXP. Much better documentation, must easier to understand activies and intents, much better development tools (Android Studio) and it was very easy to get started with NFC tags, both reading and writing to them.</p>
+<p>To log the plays on BGG i had to do some login and cookie magic, but even this was easy thanks to the library <a href="https://square.github.io/okhttp/">OkHttp</a>.</p>
+<h2 id="end-result">End result</h2>
+<p>The app worked, and I got it coded in less than a week of sparetime. You would log in with your BGG Credentials, then you would be shown a list of your games. If you click on a game and then hold your phone up to an NFC tag, the app would write the game id on the nfc tag.
+If you at any time (even if not in the app) hold up your phone to the NFC tag the app would launch and start a timer.
+In short, the app did exactly what it was supposed to!</p>
+<p>Do I still use this App? No, I simply don't play enough boardgames that this is a problem for me anymore.
+Was it a great learning experience? Yes.
+What did I learn? Before this project I would always recommend people to do &quot;cross platform apps&quot;, because of how confusing Android development was. Now I learned that it has come a long way, and it might be worth it to do a native app anyways.</p>
+</p>
+
+<div>
+  <h3>Tags</h3>
+  <ul class="tags">
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;kotlin&#x2F;">Kotlin</a></li>
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;android&#x2F;">Android</a></li>
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;nfc&#x2F;">NFC</a></li>
+    
+  </ul>
+</div>
+
+
+    </div>
+  </section>
+</body>
+
+</html>

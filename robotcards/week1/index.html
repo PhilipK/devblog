@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;style.css"  >
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;atom.xml">
+  
+  <title>PhilipK Devblog</title>
+</head>
+
+<body>
+  <section class="section">
+    <div class="container">
+      
+<h1 class="title">Robotcards: Week 1</h1>
+<p class="subtitle"><strong>2021-03-14</strong></p>
+
+ 
+
+<p><h2 id="finishing-a-game">Finishing a game</h2>
+<p>I am going to finish a game. I have always wanted to make a game, and I have started making many, but I have never really finish finished a game.
+So here is the goal. By <em>September 9th 2021</em>, I am going to release a game, of some size and some way (hoping for a Steam release, but let's see).
+I made a bet with my wife that I could do it, so now I really have to do it!</p>
+<p>I have 26 weeks!</p>
+<h2 id="what-is-the-game">What is the game</h2>
+<p>Right now the game is codenamed &quot;Robot Cards&quot;. Because that is what I know, it is about progamming robots, using cards. The gameplay is inspired by some of my favorite games like :</p>
+<ul>
+<li>Roborally (Boardgame)</li>
+<li>Into the Breach</li>
+<li>Hades</li>
+<li>Slay the spire</li>
+<li>Dominion (Boardgame)</li>
+</ul>
+<p>The gameplay might change a lot as the weeks go on, but for now the core idea is that you:
+You control robots on a board/grid.
+Each robot has a set of &quot;registers&quot; that can contain actions they can perform.
+You &quot;program&quot; the robots by playing cards on a register.
+After the planning the robots will perform the actions one by one.
+Robots can push and attack each other.</p>
+<p>The game is a rougelike, and deckbuilder, meaning that you get to change the cards you have available after each scenario. If you loose you start over and have to build a new deck (but you can unlock new cards options for your deck).</p>
+<p>Also //TODO, i need to work on this elevator pitch.</p>
+<h2 id="the-process">The process</h2>
+<p>The plan is to make a weekly update on what has been made since last week, and to talk about what I will make for the next week.
+To anyone reading this (including future me), congratulations you are my accountability partner.</p>
+<p>I might make video updates aswell, once I have something that is actually worth showing on video :-)</p>
+<p>Each week i will make one of theese post, then plan the next week (I am using Trello for planning). If I during the day get a good idea i add it to a &quot;scratchpad&quot; list in Trello and each week I will then organize and revisit the items.</p>
+<p>I will try to do a &quot;sprint planning&quot; each week, to try and keep focus for the week. Also I am trying to keep track of time, since I only have 26 weeks.</p>
+<p>I have 3 kids and a dayjob, so I only have about an hour each day to work on this project, maybe if I am lucky a bit more on weekends. Lets say 10 hours a week, that leaves me with 260 hours to make this game.... that is not a lot for a game from scratch. SO I really have to keep focus.</p>
+<p>Each week I have to answer two questions:</p>
+<p>What is fun about this game? and what is not?</p>
+<h2 id="tech">Tech</h2>
+<p>I will be making this game in Rust, using SDL2 for input and output and Legion ECS as an ECS library, but besides that the rest will be handmade. I am not using Unity or Unreal, because I want to learn how to do all the steps of the game development process.</p>
+<h2 id="week-1">Week 1</h2>
+<p>This first week, I have gotten started, I have a basic grid, units can move, they can be programmed, you have a deck of cards, a hand and a discard pile. There is currently only one goal for the enemy, and that is to get the goal area. I got A star implemented, so there is a &quot;game&quot;, as you can see from the screenshot, there is a long way to go.</p>
+<h2 id="next-week">Next Week</h2>
+<p>During play testing I found that the game was pretty hard, the way I have implemented the player registers, each card has a priorty, that is pretty hard to keep track of. Maybe i will just let each unit have a priority instead, or atleast make it clearer what is going to happen. Next week I will focus on getting the game easier to play, because it is needed to handle  randomness of the cards you are given. </p>
+</p>
+
+<div>
+  <h3>Tags</h3>
+  <ul class="tags">
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;rust&#x2F;">Rust</a></li>
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;sdl2&#x2F;">SDL2</a></li>
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;legion&#x2F;">Legion</a></li>
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;aseprite&#x2F;">Aseprite</a></li>
+    
+  </ul>
+</div>
+
+
+    </div>
+  </section>
+</body>
+
+</html>

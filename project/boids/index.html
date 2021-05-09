@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;style.css"  >
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;atom.xml">
+  
+  <title>PhilipK Devblog</title>
+</head>
+
+<body>
+  <section class="section">
+    <div class="container">
+      
+<h1 class="title">GPU Boids</h1>
+<p class="subtitle"><strong>2020-06-08</strong></p>
+
+
+<a href="https://github.com/PhilipK/GpuBoids">Code</a>
+ 
+
+<p><p>A small simulation of fish in a fish tank.</p>
+<h2 id="compute-shaders">Compute Shaders</h2>
+<p>I have been playing with shaders on and off many times, I love to code something that is visual, and the GPU and its parallelism fascinates me. I wanted to play with compute shaders, because they are shaders that you can use to calculate with, not only for visual things.
+They are a little higher level than something like CUDA but low level enough you should be able to use it for most parallel processing.
+For this little experiment I used compute shaders to simulate a school of fish.</p>
+<p>It was fun to experiment with when it made sense to use the GPU and when to use the CPU.
+For the fish, GPU, it was a very parallel problem.
+For the sharks, that hunts the fish, CPU, are one or two of the sharks at any time, even if the sharks need to consider every fish the overhead of sending the data to the GPU was just too high.</p>
+<h2 id="just-watch-sebastian">Just watch Sebastian</h2>
+<p>If you want to watch a really great video about Boids you should watch this:</p>
+<div >
+    <iframe
+        src="https://www.youtube.com/embed/bqtqltqcQhw"
+        webkitallowfullscreen
+        mozallowfullscreen
+        allowfullscreen>
+    </iframe>
+</div>
+<p>His video goes into great details.</p>
+</p>
+
+<div>
+  <h3>Tags</h3>
+  <ul class="tags">
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;unity&#x2F;">Unity</a></li>
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;gpu&#x2F;">GPU</a></li>
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;compute-shaders&#x2F;">Compute shaders</a></li>
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;shaders&#x2F;">Shaders</a></li>
+    
+      <li><a href="https:&#x2F;&#x2F;philipk.github.io&#x2F;devblog&#x2F;tags&#x2F;c&#x2F;">C#</a></li>
+    
+  </ul>
+</div>
+
+
+    </div>
+  </section>
+</body>
+
+</html>
